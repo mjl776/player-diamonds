@@ -19,7 +19,7 @@ model PlayerStats {
   id                String  @id @default(uuid()) @db.Uuid
   playerId          String  @map("player_id")
   season            String
-  seosonType        String  @map("season_type") @default("Regular Season")
+  seasonType        String  @map("season_type") @default("Regular Season")
   playerName        String  @map("player_name")
   nickname          String
   teamId            String  @map("team_id")
@@ -89,5 +89,7 @@ model PlayerStats {
 
   @@index([playerId])
   @@index([season])
+
+  @@unique([playerId, seasonType, season], name: "player_season_unique")
   @@map("player_stats")
 }
