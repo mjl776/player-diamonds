@@ -14,3 +14,78 @@ datasource db {
   url      = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
+
+model PlayerStats {
+  playerId          String  @map("player_id")
+  season            String
+  seasonType        String  @map("season_type") @default("Regular Season")
+  playerName        String  @map("player_name")
+  nickname          String
+  teamId            String  @map("team_id")
+  teamAbbreviation  String  @map("team_abbreviation")
+  teamCount         Int     @map("team_count") @db.SmallInt
+  age               Int     @db.SmallInt
+  gp                Int     @db.SmallInt
+  w                 Int     @db.SmallInt
+  l                 Int     @db.SmallInt
+  wPct              Decimal @map("w_pct") @db.Decimal(4, 3)
+  min               Decimal @db.Decimal(4, 1)
+  fgm               Decimal @db.Decimal(4, 1)
+  fga               Decimal @db.Decimal(4, 1)
+  fgPct             Decimal @map("fg_pct") @db.Decimal(4, 3)
+  fg3m              Decimal @db.Decimal(4, 1)
+  fg3a              Decimal @db.Decimal(4, 1)
+  fg3Pct            Decimal @map("fg3_pct") @db.Decimal(4, 3)
+  ftm               Decimal @db.Decimal(4, 1)
+  fta               Decimal @db.Decimal(4, 1)
+  ftPct             Decimal @map("ft_pct") @db.Decimal(4, 3)
+  oreb              Decimal @db.Decimal(4, 1)
+  dreb              Decimal @db.Decimal(4, 1)
+  reb               Decimal @db.Decimal(4, 1)
+  ast               Decimal @db.Decimal(4, 1)
+  tov               Decimal @db.Decimal(4, 1)
+  stl               Decimal @db.Decimal(4, 1)
+  blk               Decimal @db.Decimal(4, 1)
+  blka              Decimal @db.Decimal(4, 1)
+  pf                Decimal @db.Decimal(4, 1)
+  pfd               Decimal @db.Decimal(4, 1)
+  pts               Decimal @db.Decimal(4, 1)
+  plusMinus         Decimal @map("plus_minus") @db.Decimal(5, 1)
+  nbaFantasyPts     Decimal @map("nba_fantasy_pts") @db.Decimal(5, 1)
+  wnbaFantasyPts    Decimal @map("wnba_fantasy_pts") @db.Decimal(5, 1)
+  dd2               Int     @db.SmallInt
+  td3               Int     @db.SmallInt
+  gpRank            Int     @map("gp_rank")
+  wRank             Int     @map("w_rank")
+  lRank             Int     @map("l_rank")
+  wPctRank          Int     @map("w_pct_rank")
+  minRank           Int     @map("min_rank")
+  fgmRank           Int     @map("fgm_rank")
+  fgaRank           Int     @map("fga_rank")
+  fgPctRank         Int     @map("fg_pct_rank")
+  fg3mRank          Int     @map("fg3m_rank")
+  fg3aRank          Int     @map("fg3a_rank")
+  fg3PctRank        Int     @map("fg3_pct_rank")
+  ftmRank           Int     @map("ftm_rank")
+  ftaRank           Int     @map("fta_rank")
+  ftPctRank         Int     @map("ft_pct_rank")
+  orebRank          Int     @map("oreb_rank")
+  drebRank          Int     @map("dreb_rank")
+  rebRank           Int     @map("reb_rank")
+  astRank           Int     @map("ast_rank")
+  tovRank           Int     @map("tov_rank")
+  stlRank           Int     @map("stl_rank")
+  blkRank           Int     @map("blk_rank")
+  blkaRank          Int     @map("blka_rank")
+  pfRank            Int     @map("pf_rank")
+  pfdRank           Int     @map("pfd_rank")
+  ptsRank           Int     @map("pts_rank")
+  plusMinusRank     Int     @map("plus_minus_rank")
+  nbaFantasyPtsRank Int     @map("nba_fantasy_pts_rank")
+  wnbaFantasyPtsRank Int    @map("wnba_fantasy_pts_rank")
+  dd2Rank           Int     @map("dd2_rank")
+  td3Rank           Int     @map("td3_rank")
+
+  @@id([playerId, season])
+  @@map("player_stats")
+}
