@@ -18,7 +18,6 @@ datasource db {
 model PlayerStats {
   playerId          String  @map("player_id")
   season            String
-  seasonType        String  @map("season_type") @default("Regular Season")
   playerName        String  @map("player_name")
   nickname          String
   teamId            String  @map("team_id")
