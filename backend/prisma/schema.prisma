@@ -93,3 +93,49 @@ model PlayerStats {
   @@unique([playerId, seasonType, season], name: "player_season_unique")
   @@map("player_stats")
 }
+
+model PlayerGameLogs {
+  id               String   @id @default(uuid()) @db.Uuid
+  seasonId         String   @map("season_id")
+  season           String
+  seasonType       String   @map("season_type") @default("Regular Season")
+  playerId         String   @map("player_id")
+  playerName       String   @map("player_name")
+  teamId           String   @map("team_id")
+  teamAbbreviation String   @map("team_abbreviation")
+  teamName         String   @map("team_name")
+  gameId           String   @map("game_id")
+  gameDate         DateTime @map("game_date") @db.Date
+  matchup          String
+  wl               String   @db.Char(1)
+  min              Int      @db.SmallInt @default(0)
+  fgm              Int      @db.SmallInt @default(0)
+  fga              Int      @db.SmallInt @default(0)
+  fgPct            Decimal? @map("fg_pct") @db.Decimal(4, 3) @default(0)
+  fg3m             Int      @map("fg3m") @db.SmallInt @default(0)
+  fg3a             Int      @map("fg3a") @db.SmallInt @default(0)
+  fg3Pct           Decimal?  @map("fg3_pct") @db.Decimal(4, 3) @default(0)
+  ftm              Int      @db.SmallInt @default(0)
+  fta              Int      @db.SmallInt @default(0)
+  ftPct            Decimal? @map("ft_pct") @db.Decimal(4, 3) @default(0)
+  oreb             Int      @db.SmallInt @default(0)
+  dreb             Int      @db.SmallInt @default(0)
+  reb              Int      @db.SmallInt @default(0)
+  ast              Int      @db.SmallInt @default(0)
+  stl              Int      @db.SmallInt @default(0)
+  blk              Int      @db.SmallInt @default(0)
+  tov              Int      @db.SmallInt @default(0)
+  pf               Int      @db.SmallInt @default(0)
+  pts              Int      @db.SmallInt @default(0)
+  plusMinus        Decimal  @map("plus_minus") @db.Decimal(5, 1) @default(0)
+  fantasyPts       Decimal  @map("fantasy_pts") @db.Decimal(5, 1) @default(0)
+  videoAvailable   Int  @map("video_available")
+
+  @@index([playerId])
+  @@index([gameId])
+  @@index([seasonId])
+
+  @@unique([playerId, gameId], name: "player_game_unique")
+  @@map("player_game_logs")
+}
+
