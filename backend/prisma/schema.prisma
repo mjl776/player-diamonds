@@ -139,3 +139,35 @@ model PlayerGameLogs {
   @@map("player_game_logs")
 }
 
+model PlayerLeagueAverages {
+  id                String  @id @default(uuid()) @db.Uuid
+  season            String
+  seasonType        String  @map("season_type") @default("Regular Season")
+  min               Decimal @db.Decimal(4, 1)
+  fgm               Decimal @db.Decimal(4, 1)
+  fga               Decimal @db.Decimal(4, 1)
+  fgPct             Decimal @map("fg_pct") @db.Decimal(4, 3)
+  fg3m              Decimal @db.Decimal(4, 1)
+  fg3a              Decimal @db.Decimal(4, 1)
+  fg3Pct            Decimal @map("fg3_pct") @db.Decimal(4, 3)
+  ftm               Decimal @db.Decimal(4, 1)
+  fta               Decimal @db.Decimal(4, 1)
+  ftPct             Decimal @map("ft_pct") @db.Decimal(4, 3)
+  oreb              Decimal @db.Decimal(4, 1)
+  dreb              Decimal @db.Decimal(4, 1)
+  reb               Decimal @db.Decimal(4, 1)
+  ast               Decimal @db.Decimal(4, 1)
+  tov               Decimal @db.Decimal(4, 1)
+  stl               Decimal @db.Decimal(4, 1)
+  blk               Decimal @db.Decimal(4, 1)
+  blka              Decimal @db.Decimal(4, 1)
+  pf                Decimal @db.Decimal(4, 1)
+  pfd               Decimal @db.Decimal(4, 1)
+  pts               Decimal @db.Decimal(4, 1)
+  plusMinus         Decimal @map("plus_minus") @db.Decimal(5, 1)
+
+  @@index([season])
+  @@unique([season, seasonType], name: "season_unique")
+  @@map("player_league_averages")
+
+}
