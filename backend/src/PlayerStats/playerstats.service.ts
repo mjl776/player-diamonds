@@ -7,18 +7,21 @@ import { FindUnderValuedPlayersQuery } from './playerstats.models';
 export class PlayerStatsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  private async getSeasonAverageStats(season: string, seasonType: string) {
+  private async getSeasonAverageStats(season: string, seasonType: string, position: string) {
     return await this.prisma.playerLeagueAverages.findFirst({
-        where: { season: season, seasonType: seasonType },
+        where: { season: season, seasonType: seasonType, position: position},
     });
   }
 
-  private async getAverageOrBelowAveragePlayers(season: string, seasonType: string, averagePlayerStats: PlayerLeagueAverages) {
+  private async getAverageOrBelowAveragePlayers(season: string, seasonType: string, averagePlayerStats: PlayerLeagueAverages, position: string) {
     return await this.prisma.playerStats.findMany({
         where: {
+            playerInfo: {
+              position: position,
+            },
             season: season,
             seasonType: seasonType,
-            gp: { lte: 30 }, // Only consider players who have played at least 30 games
+            gp: { gte: 20 }, // Only consider players who have played at least 20 games
             min: { lte: averagePlayerStats.min },
             fgm: { lte: averagePlayerStats.fgm },
             fga: { lte: averagePlayerStats.fga },
@@ -28,7 +31,7 @@ export class PlayerStatsService {
             fg3Pct: { lte: averagePlayerStats.fg3Pct },
             ftm: { lte: averagePlayerStats.ftm },
             fta: { lte: averagePlayerStats.fta },
-            ftPct: { gte: averagePlayerStats.ftPct },
+            ftPct: { lte: averagePlayerStats.ftPct },
             oreb: { lte: averagePlayerStats.oreb },
             dreb: { lte: averagePlayerStats.dreb },
             reb: { lte: averagePlayerStats.reb },
@@ -51,17 +54,27 @@ export class PlayerStatsService {
   }: FindUnderValuedPlayersQuery) {
 
     // Find the average stats for the given season and season type
-    const averagePlayerStats = await this.getSeasonAverageStats(season, seasonType);
+    const averagePlayerStatsGuard = await this.getSeasonAverageStats(season, seasonType, "G");
+    const averagePlayerStatsForward = await this.getSeasonAverageStats(season, seasonType, "F");
+    const averagePlayerStatsCenter = await this.getSeasonAverageStats(season, seasonType, "C");
 
-    if (!averagePlayerStats) {
+    if (!averagePlayerStatsCenter || !averagePlayerStatsForward || !averagePlayerStatsGuard) {
         throw new Error(`No average stats found for season ${season} and season type ${seasonType}`);
     };
 
-    // Find players whose stats are at or below average
-    const averageOrBelowAveragePlayers = await this.getAverageOrBelowAveragePlayers(season, seasonType, averagePlayerStats);
+    // Find all postions whose stats are at or below average and compare against their perspective position class
+    const averageOrBelowAverageGuards = await this.getAverageOrBelowAveragePlayers(season, seasonType, averagePlayerStatsGuard, "G");
+    const averageOrBelowAverageForwards = await this.getAverageOrBelowAveragePlayers(season, seasonType, averagePlayerStatsForward, "F");
+    const averageOrBelowAverageCenters = await this.getAverageOrBelowAveragePlayers(season, seasonType, averagePlayerStatsCenter, "C");
+
+    // Combine all the results into a single array
+    const averageOrBelowAveragePlayers = [
+        ...averageOrBelowAverageGuards,
+        ...averageOrBelowAverageForwards,
+        ...averageOrBelowAverageCenters,
+    ];
 
     return averageOrBelowAveragePlayers;
-
   }
 
 }

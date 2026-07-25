@@ -86,8 +86,7 @@ model PlayerStats {
   wnbaFantasyPtsRank Int         @map("wnba_fantasy_pts_rank")
   dd2Rank            Int         @map("dd2_rank")
   td3Rank            Int         @map("td3_rank")
-  playerInfo         PlayerInfo? @relation(fields: [playerInfoId], references: [id])
-  playerInfoId       String?     @db.Uuid
+  playerInfo         PlayerInfo? @relation(fields: [playerId], references: [personId])
 
   @@unique([playerId, seasonType, season], name: "player_season_unique")
   @@index([playerId])
@@ -131,8 +130,7 @@ model PlayerGameLogs {
   plusMinus        Decimal     @default(0) @map("plus_minus") @db.Decimal(5, 1)
   fantasyPts       Decimal     @default(0) @map("fantasy_pts") @db.Decimal(5, 1)
   videoAvailable   Int         @map("video_available")
-  playerInfo       PlayerInfo? @relation(fields: [playerInfoId], references: [id])
-  playerInfoId     String?     @db.Uuid
+  playerInfo       PlayerInfo? @relation(fields: [playerId], references: [personId])
 
   @@unique([playerId, gameId], name: "player_game_unique")
   @@index([playerId])
@@ -145,6 +143,7 @@ model PlayerLeagueAverages {
   id         String  @id @default(uuid()) @db.Uuid
   season     String
   seasonType String  @default("Regular Season") @map("season_type")
+  position   String  @default("all")
   gp         Int     @default(0) @db.SmallInt
   min        Decimal @db.Decimal(4, 1)
   fgm        Decimal @db.Decimal(4, 1)
@@ -169,7 +168,7 @@ model PlayerLeagueAverages {
   pts        Decimal @db.Decimal(4, 1)
   plusMinus  Decimal @map("plus_minus") @db.Decimal(5, 1)
 
-  @@unique([season, seasonType], name: "season_unique")
+  @@unique([season, seasonType, position], name: "season_position_unique")
   @@index([season])
   @@map("player_league_averages")
 }

@@ -8,8 +8,6 @@ export class PlayerStatsController {
 
     @Get('find-undervalued-players')
     findUndervaluedPlayers(@Query() query: FindUnderValuedPlayersQuery) {
-        const season = '2025-26'; // Example season
-        const seasonType = 'Regular Season'; // Example season type
         return this.playerStatsService.findUndervaluedPlayers(query);
     }
 }
