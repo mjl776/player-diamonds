@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { PrismaClient } from "../generated/prisma/client";
 
 const prisma = new PrismaClient();
@@ -10,6 +11,7 @@ async function getLeaguePlayerStatAverages(season: string, seasonType: string) {
             seasonType,
           },
           _avg: {
+            gp: true,
             min: true,
             fgm: true,
             fga: true,
@@ -39,6 +41,7 @@ async function getLeaguePlayerStatAverages(season: string, seasonType: string) {
           data: {
             season,
             seasonType,
+            gp: leagueAverages._avg.gp!,
             min: leagueAverages._avg.min!,
             fgm: leagueAverages._avg.fgm!,
             fga: leagueAverages._avg.fga!,
