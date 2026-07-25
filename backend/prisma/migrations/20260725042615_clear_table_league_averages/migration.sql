@@ -1,0 +1,2 @@
+
+TRUNCATE TABLE "player_league_averages" RESTART IDENTITY CASCADE;

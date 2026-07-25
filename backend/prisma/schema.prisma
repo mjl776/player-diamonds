@@ -10,132 +10,199 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
 model PlayerStats {
-  id                String  @id @default(uuid()) @db.Uuid
-  playerId          String  @map("player_id")
-  season            String
-  seasonType        String  @map("season_type") @default("Regular Season")
-  playerName        String  @map("player_name")
-  nickname          String
-  teamId            String  @map("team_id")
-  teamAbbreviation  String  @map("team_abbreviation")
-  teamCount         Int     @map("team_count") @db.SmallInt
-  age               Int     @db.SmallInt
-  gp                Int     @db.SmallInt
-  w                 Int     @db.SmallInt
-  l                 Int     @db.SmallInt
-  wPct              Decimal @map("w_pct") @db.Decimal(4, 3)
-  min               Decimal @db.Decimal(4, 1)
-  fgm               Decimal @db.Decimal(4, 1)
-  fga               Decimal @db.Decimal(4, 1)
-  fgPct             Decimal @map("fg_pct") @db.Decimal(4, 3)
-  fg3m              Decimal @db.Decimal(4, 1)
-  fg3a              Decimal @db.Decimal(4, 1)
-  fg3Pct            Decimal @map("fg3_pct") @db.Decimal(4, 3)
-  ftm               Decimal @db.Decimal(4, 1)
-  fta               Decimal @db.Decimal(4, 1)
-  ftPct             Decimal @map("ft_pct") @db.Decimal(4, 3)
-  oreb              Decimal @db.Decimal(4, 1)
-  dreb              Decimal @db.Decimal(4, 1)
-  reb               Decimal @db.Decimal(4, 1)
-  ast               Decimal @db.Decimal(4, 1)
-  tov               Decimal @db.Decimal(4, 1)
-  stl               Decimal @db.Decimal(4, 1)
-  blk               Decimal @db.Decimal(4, 1)
-  blka              Decimal @db.Decimal(4, 1)
-  pf                Decimal @db.Decimal(4, 1)
-  pfd               Decimal @db.Decimal(4, 1)
-  pts               Decimal @db.Decimal(4, 1)
-  plusMinus         Decimal @map("plus_minus") @db.Decimal(5, 1)
-  nbaFantasyPts     Decimal @map("nba_fantasy_pts") @db.Decimal(5, 1)
-  wnbaFantasyPts    Decimal @map("wnba_fantasy_pts") @db.Decimal(5, 1)
-  dd2               Int     @db.SmallInt
-  td3               Int     @db.SmallInt
-  gpRank            Int     @map("gp_rank")
-  wRank             Int     @map("w_rank")
-  lRank             Int     @map("l_rank")
-  wPctRank          Int     @map("w_pct_rank")
-  minRank           Int     @map("min_rank")
-  fgmRank           Int     @map("fgm_rank")
-  fgaRank           Int     @map("fga_rank")
-  fgPctRank         Int     @map("fg_pct_rank")
-  fg3mRank          Int     @map("fg3m_rank")
-  fg3aRank          Int     @map("fg3a_rank")
-  fg3PctRank        Int     @map("fg3_pct_rank")
-  ftmRank           Int     @map("ftm_rank")
-  ftaRank           Int     @map("fta_rank")
-  ftPctRank         Int     @map("ft_pct_rank")
-  orebRank          Int     @map("oreb_rank")
-  drebRank          Int     @map("dreb_rank")
-  rebRank           Int     @map("reb_rank")
-  astRank           Int     @map("ast_rank")
-  tovRank           Int     @map("tov_rank")
-  stlRank           Int     @map("stl_rank")
-  blkRank           Int     @map("blk_rank")
-  blkaRank          Int     @map("blka_rank")
-  pfRank            Int     @map("pf_rank")
-  pfdRank           Int     @map("pfd_rank")
-  ptsRank           Int     @map("pts_rank")
-  plusMinusRank     Int     @map("plus_minus_rank")
-  nbaFantasyPtsRank Int     @map("nba_fantasy_pts_rank")
-  wnbaFantasyPtsRank Int    @map("wnba_fantasy_pts_rank")
-  dd2Rank           Int     @map("dd2_rank")
-  td3Rank           Int     @map("td3_rank")
-
-  @@index([playerId])
-  @@index([season])
+  id                 String      @id @default(uuid()) @db.Uuid
+  playerId           String      @map("player_id")
+  season             String
+  seasonType         String      @default("Regular Season") @map("season_type")
+  playerName         String      @map("player_name")
+  nickname           String
+  teamId             String      @map("team_id")
+  teamAbbreviation   String      @map("team_abbreviation")
+  teamCount          Int         @map("team_count") @db.SmallInt
+  age                Int         @db.SmallInt
+  gp                 Int         @db.SmallInt
+  w                  Int         @db.SmallInt
+  l                  Int         @db.SmallInt
+  wPct               Decimal     @map("w_pct") @db.Decimal(4, 3)
+  min                Decimal     @db.Decimal(4, 1)
+  fgm                Decimal     @db.Decimal(4, 1)
+  fga                Decimal     @db.Decimal(4, 1)
+  fgPct              Decimal     @map("fg_pct") @db.Decimal(4, 3)
+  fg3m               Decimal     @db.Decimal(4, 1)
+  fg3a               Decimal     @db.Decimal(4, 1)
+  fg3Pct             Decimal     @map("fg3_pct") @db.Decimal(4, 3)
+  ftm                Decimal     @db.Decimal(4, 1)
+  fta                Decimal     @db.Decimal(4, 1)
+  ftPct              Decimal     @map("ft_pct") @db.Decimal(4, 3)
+  oreb               Decimal     @db.Decimal(4, 1)
+  dreb               Decimal     @db.Decimal(4, 1)
+  reb                Decimal     @db.Decimal(4, 1)
+  ast                Decimal     @db.Decimal(4, 1)
+  tov                Decimal     @db.Decimal(4, 1)
+  stl                Decimal     @db.Decimal(4, 1)
+  blk                Decimal     @db.Decimal(4, 1)
+  blka               Decimal     @db.Decimal(4, 1)
+  pf                 Decimal     @db.Decimal(4, 1)
+  pfd                Decimal     @db.Decimal(4, 1)
+  pts                Decimal     @db.Decimal(4, 1)
+  plusMinus          Decimal     @map("plus_minus") @db.Decimal(5, 1)
+  nbaFantasyPts      Decimal     @map("nba_fantasy_pts") @db.Decimal(5, 1)
+  wnbaFantasyPts     Decimal     @map("wnba_fantasy_pts") @db.Decimal(5, 1)
+  dd2                Int         @db.SmallInt
+  td3                Int         @db.SmallInt
+  gpRank             Int         @map("gp_rank")
+  wRank              Int         @map("w_rank")
+  lRank              Int         @map("l_rank")
+  wPctRank           Int         @map("w_pct_rank")
+  minRank            Int         @map("min_rank")
+  fgmRank            Int         @map("fgm_rank")
+  fgaRank            Int         @map("fga_rank")
+  fgPctRank          Int         @map("fg_pct_rank")
+  fg3mRank           Int         @map("fg3m_rank")
+  fg3aRank           Int         @map("fg3a_rank")
+  fg3PctRank         Int         @map("fg3_pct_rank")
+  ftmRank            Int         @map("ftm_rank")
+  ftaRank            Int         @map("fta_rank")
+  ftPctRank          Int         @map("ft_pct_rank")
+  orebRank           Int         @map("oreb_rank")
+  drebRank           Int         @map("dreb_rank")
+  rebRank            Int         @map("reb_rank")
+  astRank            Int         @map("ast_rank")
+  tovRank            Int         @map("tov_rank")
+  stlRank            Int         @map("stl_rank")
+  blkRank            Int         @map("blk_rank")
+  blkaRank           Int         @map("blka_rank")
+  pfRank             Int         @map("pf_rank")
+  pfdRank            Int         @map("pfd_rank")
+  ptsRank            Int         @map("pts_rank")
+  plusMinusRank      Int         @map("plus_minus_rank")
+  nbaFantasyPtsRank  Int         @map("nba_fantasy_pts_rank")
+  wnbaFantasyPtsRank Int         @map("wnba_fantasy_pts_rank")
+  dd2Rank            Int         @map("dd2_rank")
+  td3Rank            Int         @map("td3_rank")
+  playerInfo         PlayerInfo? @relation(fields: [playerId], references: [personId])
 
   @@unique([playerId, seasonType, season], name: "player_season_unique")
+  @@index([playerId])
+  @@index([season])
   @@map("player_stats")
 }
 
 model PlayerGameLogs {
-  id               String   @id @default(uuid()) @db.Uuid
-  seasonId         String   @map("season_id")
+  id               String      @id @default(uuid()) @db.Uuid
+  seasonId         String      @map("season_id")
   season           String
-  seasonType       String   @map("season_type") @default("Regular Season")
-  playerId         String   @map("player_id")
-  playerName       String   @map("player_name")
-  teamId           String   @map("team_id")
-  teamAbbreviation String   @map("team_abbreviation")
-  teamName         String   @map("team_name")
-  gameId           String   @map("game_id")
-  gameDate         DateTime @map("game_date") @db.Date
+  seasonType       String      @default("Regular Season") @map("season_type")
+  playerId         String      @map("player_id")
+  playerName       String      @map("player_name")
+  teamId           String      @map("team_id")
+  teamAbbreviation String      @map("team_abbreviation")
+  teamName         String      @map("team_name")
+  gameId           String      @map("game_id")
+  gameDate         DateTime    @map("game_date") @db.Date
   matchup          String
-  wl               String   @db.Char(1)
-  min              Int      @db.SmallInt @default(0)
-  fgm              Int      @db.SmallInt @default(0)
-  fga              Int      @db.SmallInt @default(0)
-  fgPct            Decimal? @map("fg_pct") @db.Decimal(4, 3) @default(0)
-  fg3m             Int      @map("fg3m") @db.SmallInt @default(0)
-  fg3a             Int      @map("fg3a") @db.SmallInt @default(0)
-  fg3Pct           Decimal?  @map("fg3_pct") @db.Decimal(4, 3) @default(0)
-  ftm              Int      @db.SmallInt @default(0)
-  fta              Int      @db.SmallInt @default(0)
-  ftPct            Decimal? @map("ft_pct") @db.Decimal(4, 3) @default(0)
-  oreb             Int      @db.SmallInt @default(0)
-  dreb             Int      @db.SmallInt @default(0)
-  reb              Int      @db.SmallInt @default(0)
-  ast              Int      @db.SmallInt @default(0)
-  stl              Int      @db.SmallInt @default(0)
-  blk              Int      @db.SmallInt @default(0)
-  tov              Int      @db.SmallInt @default(0)
-  pf               Int      @db.SmallInt @default(0)
-  pts              Int      @db.SmallInt @default(0)
-  plusMinus        Decimal  @map("plus_minus") @db.Decimal(5, 1) @default(0)
-  fantasyPts       Decimal  @map("fantasy_pts") @db.Decimal(5, 1) @default(0)
-  videoAvailable   Int  @map("video_available")
+  wl               String      @db.Char(1)
+  min              Int         @default(0) @db.SmallInt
+  fgm              Int         @default(0) @db.SmallInt
+  fga              Int         @default(0) @db.SmallInt
+  fgPct            Decimal?    @default(0) @map("fg_pct") @db.Decimal(4, 3)
+  fg3m             Int         @default(0) @map("fg3m") @db.SmallInt
+  fg3a             Int         @default(0) @map("fg3a") @db.SmallInt
+  fg3Pct           Decimal?    @default(0) @map("fg3_pct") @db.Decimal(4, 3)
+  ftm              Int         @default(0) @db.SmallInt
+  fta              Int         @default(0) @db.SmallInt
+  ftPct            Decimal?    @default(0) @map("ft_pct") @db.Decimal(4, 3)
+  oreb             Int         @default(0) @db.SmallInt
+  dreb             Int         @default(0) @db.SmallInt
+  reb              Int         @default(0) @db.SmallInt
+  ast              Int         @default(0) @db.SmallInt
+  stl              Int         @default(0) @db.SmallInt
+  blk              Int         @default(0) @db.SmallInt
+  tov              Int         @default(0) @db.SmallInt
+  pf               Int         @default(0) @db.SmallInt
+  pts              Int         @default(0) @db.SmallInt
+  plusMinus        Decimal     @default(0) @map("plus_minus") @db.Decimal(5, 1)
+  fantasyPts       Decimal     @default(0) @map("fantasy_pts") @db.Decimal(5, 1)
+  videoAvailable   Int         @map("video_available")
+  playerInfo       PlayerInfo? @relation(fields: [playerId], references: [personId])
 
+  @@unique([playerId, gameId], name: "player_game_unique")
   @@index([playerId])
   @@index([gameId])
   @@index([seasonId])
-
-  @@unique([playerId, gameId], name: "player_game_unique")
   @@map("player_game_logs")
 }
 
+model PlayerLeagueAverages {
+  id         String  @id @default(uuid()) @db.Uuid
+  season     String
+  seasonType String  @default("Regular Season") @map("season_type")
+  position   String  @default("all")
+  gp         Int     @default(0) @db.SmallInt
+  min        Decimal @db.Decimal(4, 1)
+  fgm        Decimal @db.Decimal(4, 1)
+  fga        Decimal @db.Decimal(4, 1)
+  fgPct      Decimal @map("fg_pct") @db.Decimal(4, 3)
+  fg3m       Decimal @db.Decimal(4, 1)
+  fg3a       Decimal @db.Decimal(4, 1)
+  fg3Pct     Decimal @map("fg3_pct") @db.Decimal(4, 3)
+  ftm        Decimal @db.Decimal(4, 1)
+  fta        Decimal @db.Decimal(4, 1)
+  ftPct      Decimal @map("ft_pct") @db.Decimal(4, 3)
+  oreb       Decimal @db.Decimal(4, 1)
+  dreb       Decimal @db.Decimal(4, 1)
+  reb        Decimal @db.Decimal(4, 1)
+  ast        Decimal @db.Decimal(4, 1)
+  tov        Decimal @db.Decimal(4, 1)
+  stl        Decimal @db.Decimal(4, 1)
+  blk        Decimal @db.Decimal(4, 1)
+  blka       Decimal @db.Decimal(4, 1)
+  pf         Decimal @db.Decimal(4, 1)
+  pfd        Decimal @db.Decimal(4, 1)
+  pts        Decimal @db.Decimal(4, 1)
+  plusMinus  Decimal @map("plus_minus") @db.Decimal(5, 1)
+
+  @@unique([season, seasonType, position], name: "season_position_unique")
+  @@index([season])
+  @@map("player_league_averages")
+}
+
+model PlayerInfo {
+  id                 String  @id @default(uuid()) @db.Uuid
+  personId           String  @unique @map("person_id")
+  firstName          String  @map("player_first_name")
+  lastName           String  @map("player_last_name")
+  playerSlug         String  @map("player_slug")
+  teamId             String  @map("team_id")
+  teamSlug           String? @default("FA") @map("team_slug")
+  isDefunct          Int     @map("is_defunct") @db.SmallInt
+  teamCity           String? @default("FA") @map("team_city")
+  teamName           String? @default("FA") @map("team_name")
+  teamAbbreviation   String? @default("FA") @map("team_abbreviation")
+  jerseyNumber       String? @default("No Team") @map("jersey_number")
+  position           String
+  height             String? @default("Not Available")
+  weight             String? @default("Not Available")
+  college            String
+  country            String
+  draftYear          Int?    @map("draft_year")
+  draftRound         Int?    @map("draft_round") @db.SmallInt
+  draftNumber        Int?    @map("draft_number") @db.SmallInt
+  rosterStatus       Int?    @default(0) @map("roster_status") @db.SmallInt
+  fromYear           String  @map("from_year")
+  toYear             String  @map("to_year")
+  statsTimeframe     String  @map("stats_timeframe")
+  supplementalStatus Int     @map("supplemental_status") @db.SmallInt
+
+  playerStats    PlayerStats[]
+  playerGameLogs PlayerGameLogs[]
+
+  @@index([position])
+  @@map("player_info")
+}
