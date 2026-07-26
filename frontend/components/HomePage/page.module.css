@@ -1,0 +1,21 @@
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  flex: 1;
+  background: linear-gradient(135deg, var(--foreground), var(--tertiary));
+  background-attachment: fixed;
+  color: var(--background);
+}
+
+.header {
+  font-size: 4.0rem;
+}
+
+.subheader {
+  font-size: 2.0rem;
+  margin-top: 1rem;
+}
+
