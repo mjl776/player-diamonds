@@ -3,7 +3,6 @@ import { PrismaService } from '../../src/prisma.service';
 import { PlayerLeagueAverages } from '../../generated/prisma/client';
 import { FindUnderValuedPlayersQuery, StandDeviationResult } from './playerstats.models';
 import { PlayerGameLogs, PlayerStats } from 'generated/prisma/browser';
-import { isDataView } from 'node:util/types';
 
 @Injectable()
 export class PlayerStatsService {
@@ -84,7 +83,6 @@ export class PlayerStatsService {
           + (ast >= ${player.ast.toNumber()} + COALESCE(${playerStandardDeviation.standard_deviation_assists.mul(2)}, 0))::int
           + (reb >= ${player.reb.toNumber()} + COALESCE(${playerStandardDeviation.standard_deviation_rebounds.mul(2)}, 0))::int
           AS match_count
-        FROM "player_game_logs"Is 
         FROM "player_game_logs"
         WHERE player_id = ${player.playerId}
           AND season = ${season}
