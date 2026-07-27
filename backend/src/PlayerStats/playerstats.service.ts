@@ -82,8 +82,8 @@ export class PlayerStatsService {
               (ast >= ${player.ast.toNumber()} + COALESCE(${playerStandardDeviation.standard_deviation_assists.mul(2)}, 0)) AS ast_match,
               (reb >= ${player.reb.toNumber()} + COALESCE(${playerStandardDeviation.standard_deviation_rebounds.mul(2)}, 0)) AS reb_match,
               ((pts + ${player.pts.toNumber()}) / COALESCE(${playerStandardDeviation.standard_deviation_points}, 0)) AS pts_std_deviation,
-              ((ast + ${player.pts.toNumber()}) / COALESCE(${playerStandardDeviation.standard_deviation_points}, 0)) AS pts_std_deviation,
-              ((reb + ${player.pts.toNumber()}) / COALESCE(${playerStandardDeviation.standard_deviation_points}, 0)) AS pts_std_deviation,
+              ((ast + ${player.pts.toNumber()}) / COALESCE(${playerStandardDeviation.standard_deviation_points}, 0)) AS asts_std_deviation,
+              ((reb + ${player.pts.toNumber()}) / COALESCE(${playerStandardDeviation.standard_deviation_points}, 0)) AS reb_std_deviation,
               (pts >= ${player.pts.toNumber()} + COALESCE(${playerStandardDeviation.standard_deviation_points.mul(2)}, 0))::int
               + (ast >= ${player.ast.toNumber()} + COALESCE(${playerStandardDeviation.standard_deviation_assists.mul(2)}, 0))::int
               + (reb >= ${player.reb.toNumber()} + COALESCE(${playerStandardDeviation.standard_deviation_rebounds.mul(2)}, 0))::int
