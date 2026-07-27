@@ -153,6 +153,9 @@ export class PlayerStatsService {
     const rebThresholds = eligiblePlayers.map(({ player, sd }) =>
       player.reb.toNumber() + sd.standard_deviation_rebounds.toNumber() * 2);
 
+    // Create standard deviation thresholds to show standard deviations of players
+    // via the player_game_logs table for points, assists, and rebounds
+
       return {
         playerIds,
         ptsThresholds,
