@@ -66,7 +66,7 @@ export class PlayerStatsService {
       `;
   }
 
-  private async getGamesAboveStandardDeviationOfPlayers(season: string, seasonType: string, averageOrBelowAveragePlayers: PlayerStats[], playerstandardDeviationResults: StandDeviationResult[]) {
+  private async getPlayersWithAboveStandardDeviation(season: string, seasonType: string, averageOrBelowAveragePlayers: PlayerStats[], playerstandardDeviationResults: StandDeviationResult[]) {
     // For each player, find the games where they performed above their standard deviation for points, assists, and rebounds + averageOrBelowAveragePlayers points, assists, and rebounds
     const gamesAboveStandardDeviation: PlayerSDGameStats[] = [];
     for (const player of averageOrBelowAveragePlayers) {
@@ -106,7 +106,7 @@ export class PlayerStatsService {
               SELECT *, COUNT(*) OVER() as total_rows
               FROM total_results
           ) subquery
-          WHERE total_rows > 5;
+          WHERE total_rows >= 5;
       `;
 
       if (games.length > 0) {
@@ -161,7 +161,7 @@ export class PlayerStatsService {
     // points, assists, or rebounds
     // + averageOrBelowAveragePlayers points, assists, or rebounds
     // by 2 standard deviations
-    const playesWithGamesAboveSD = await this.getGamesAboveStandardDeviationOfPlayers(season, seasonType, averageOrBelowAveragePlayers, calculateStandarDeviationOfPlayers);
+    const playesWithGamesAboveSD = await this.getPlayersWithAboveStandardDeviation(season, seasonType, averageOrBelowAveragePlayers, calculateStandarDeviationOfPlayers);
 
     // Sort the gamesAboveStandardDeviation array
     // by the count of games above standard deviation in ascending order
