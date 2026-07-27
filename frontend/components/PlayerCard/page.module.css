@@ -1,0 +1,31 @@
+
+.cardContainer {
+    border: var(--foreground) 2px solid;
+    border-radius: 2rem;
+    height: 15rem;
+    width: 15rem;
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.5rem;
+    background-color: var(--foreground);
+    padding: 2rem;
+}
+
+.container {
+    display: flex;
+    align-items: center;
+    text-align: left;
+    justify-content: center;
+    flex: 1;
+    background-attachment: fixed;
+    color: var(--background);
+}
+
+.playerName {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+
+

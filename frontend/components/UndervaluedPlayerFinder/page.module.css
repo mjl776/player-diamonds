@@ -10,6 +10,16 @@
   padding: 10px;
 }
 
+.header {
+    font-size: 4.0rem;
+}
+
+.sectionHeader {
+    font-size: 2.0rem;
+    margin-top: 1rem;
+    padding: 1rem;
+}
+
 .playerList{
     display: grid;
     grid-auto-flow: column;
@@ -19,6 +29,7 @@
 .tableContainer {
     background: var(--foreground);
     border-radius: 1.5rem;
+    padding: 2rem;
 }
 
 .tableHeader {
@@ -26,5 +37,12 @@
     padding: 0px 20px;
     font-size: 0.875rem;
     text-align: left;
+}
+
+.descriptionContainer {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: center;
 }
 

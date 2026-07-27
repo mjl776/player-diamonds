@@ -1,5 +1,11 @@
-import { PlayerStatsObject } from "./underValuedPlayerTypes";
+import { PlayerObject } from "./underValuedPlayerTypes";
 
-export type PlayerCardProps = {
-    player: PlayerStatsObject;
+export type PlayerStatsProps = {
+    player: PlayerObject;
+    rank?: number;
+}
+
+
+export type PlayerCaroselProps = {
+    players: PlayerObject[];
 }
