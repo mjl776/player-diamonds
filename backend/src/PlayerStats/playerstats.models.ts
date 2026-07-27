@@ -1,5 +1,5 @@
 import { Decimal } from "@prisma/client/runtime/library";
-import { PlayerGameLogs } from "generated/prisma/browser";
+import { PlayerStats, PlayerGameLogs } from "generated/prisma/client";
 
 // Controller Types
 export type FindUnderValuedPlayersQuery = {
@@ -33,7 +33,20 @@ export type StandDeviationResult = {
     standard_deviation_plus_minus: Decimal;
 }
 
-export type PlayerGameStats = {
-    player_game_logs: PlayerGameLogs,
-    stat_match: string;
+export type PlayerSDGameStats = {
+    playerName: string;
+    stats: PlayerStats;
+    player_game_logs: PlayerSDGameStatsQueryResult[];
+    count: number;
 }
+
+export type PlayerSDGameStatsQueryResult =
+    PlayerGameLogs & {
+        pts_match: boolean;
+        ast_match: boolean;
+        reb_match: boolean;
+        pts_std_deviation: Decimal;
+        match_count: number;
+        total_rows: number;
+    }
+
