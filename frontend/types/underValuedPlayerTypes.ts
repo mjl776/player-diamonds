@@ -1,7 +1,7 @@
 // Shape of a player returned by the backend's findUndervaluedPlayers endpoint.
 // Mirrors the Prisma `PlayerStats` model, minus the `playerInfo` relation
 // (not included in the query) and with Decimal fields serialized to string over JSON.
-export type UndervaluedPlayer = {
+export type PlayerStatsObject = {
     id: string;
     playerId: string;
     season: string;
@@ -73,3 +73,54 @@ export type UndervaluedPlayer = {
     dd2Rank: number;
     td3Rank: number;
 };
+
+export type PlayerGameLogObject = {
+    id: string;
+    seasonId: string;
+    season: string;
+    seasonType: string;
+    playerId: string;
+    playerName: string;
+    teamId: string;
+    teamAbbreviation: string;
+    teamName: string;
+    gameId: string;
+    gameDate: string;
+    matchup: string;
+    wl: string;
+    min: number;
+    fgm: number;
+    fga: number;
+    fgPct: string;
+    fg3m: number;
+    fg3a: number;
+    fg3Pct: string;
+    ftm: number;
+    fta: number;
+    ftPct: string;
+    oreb: number;
+    dreb: number;
+    reb: number;
+    ast: number;
+    stl: number;
+    blk: number;
+    tov: number;
+    pf: number;
+    pts: number;
+    plusMinus: string;
+    fantasyPts: string;
+    videoAvailable: number;
+    ptsMatch: boolean;
+    astMatch: boolean;
+    rebMatch: boolean;
+    ptsStdDeviation: string;
+    matchCount: number;
+};
+
+export type PlayerObject = {
+    playerName: string;
+    count: number;
+    stats: PlayerStatsObject;
+    player_game_logs: PlayerGameLogObject[];
+}
+
