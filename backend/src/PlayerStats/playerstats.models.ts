@@ -47,6 +47,6 @@ export type PlayerSDGameStatsQueryResult =
         reb_match: boolean;
         pts_std_deviation: Decimal;
         match_count: number;
-        total_rows: number;
+        player_game_logs: PlayerSDGameStatsQueryResult[];
     }
 
