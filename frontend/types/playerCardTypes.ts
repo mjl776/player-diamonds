@@ -1,5 +1,5 @@
-import { UndervaluedPlayer } from "./underValuedPlayerTypes";
+import { PlayerStatsObject } from "./underValuedPlayerTypes";
 
 export type PlayerCardProps = {
-    player: UndervaluedPlayer;
+    player: PlayerStatsObject;
 }
