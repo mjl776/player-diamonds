@@ -1,0 +1,1 @@
+export const BUFFER_AVG_STATS_QUERY = 5.0;

@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../src/prisma.service';
 import { PlayerLeagueAverages } from '../../generated/prisma/client';
-import { FindUnderValuedPlayersQuery } from './playerstats.models';
+import { FindUnderValuedPlayersQuery, PlayerSDGameStats, PlayerSDGameStatsQueryResult, StandDeviationResult } from './playerstats.models';
+import { PlayerStats } from 'generated/prisma/client';
 
 @Injectable()
 export class PlayerStatsService {
@@ -14,6 +15,9 @@ export class PlayerStatsService {
   }
 
   private async getAverageOrBelowAveragePlayers(season: string, seasonType: string, averagePlayerStats: PlayerLeagueAverages, position: string) {
+    // Initially in our query use very basic
+    // stats to find players who are below average or average players,
+    // Then we can add more advanced stats to the query later
     return await this.prisma.playerStats.findMany({
         where: {
             playerInfo: {
@@ -22,31 +26,102 @@ export class PlayerStatsService {
             season: season,
             seasonType: seasonType,
             gp: { gte: 20 }, // Only consider players who have played at least 20 games
-            min: { lte: averagePlayerStats.min },
-            fgm: { lte: averagePlayerStats.fgm },
-            fga: { lte: averagePlayerStats.fga },
-            fgPct: { lte: averagePlayerStats.fgPct },
-            fg3m: { lte: averagePlayerStats.fg3m },
-            fg3a: { lte: averagePlayerStats.fg3a },
-            fg3Pct: { lte: averagePlayerStats.fg3Pct },
-            ftm: { lte: averagePlayerStats.ftm },
-            fta: { lte: averagePlayerStats.fta },
-            ftPct: { lte: averagePlayerStats.ftPct },
-            oreb: { lte: averagePlayerStats.oreb },
-            dreb: { lte: averagePlayerStats.dreb },
-            reb: { lte: averagePlayerStats.reb },
+            reb: { lte: averagePlayerStats.reb},
             ast: { lte: averagePlayerStats.ast },
-            tov: { lte: averagePlayerStats.tov },
-            stl: { lte: averagePlayerStats.stl },
-            blk: { lte: averagePlayerStats.blk },
-            blka: { lte: averagePlayerStats.blka },
-            pf: { lte: averagePlayerStats.pf },
-            pfd: { lte: averagePlayerStats.pfd },
             pts: { lte: averagePlayerStats.pts },
-            plusMinus: { lte: averagePlayerStats.plusMinus },
         },
     });
   }
+
+  private async calculateStandardDeviationOfPlayerStats(season: string, seasonType: string, playerIds: string[]): Promise<StandDeviationResult[]> {
+      // calcuate the standard deviation of the stats for the players who are below average or average
+      return await this.prisma.$queryRaw
+      `
+        SELECT
+          player_id,
+          player_name,
+          stddev_samp(pts) AS standard_deviation_points,
+          stddev_samp(ast) AS standard_deviation_assists,
+          stddev_samp(reb) AS standard_deviation_rebounds,
+          stddev_samp(oreb) AS standard_deviation_offensive_rebounds,
+          stddev_samp(dreb) AS standard_deviation_defensive_rebounds,
+          stddev_samp(min) AS standard_deviation_minutes,
+          stddev_samp(fgm) AS standard_deviation_field_goals_made,
+          stddev_samp(fga) AS standard_deviation_field_goals_attempted,
+          stddev_samp(fg_pct) AS standard_deviation_field_goal_percentage,
+          stddev_samp(fg3m) AS standard_deviation_three_point_made,
+          stddev_samp(fg3a) AS standard_deviation_three_point_attempted,
+          stddev_samp(fg3_pct) AS standard_deviation_three_point_percentage,
+          stddev_samp(ftm) AS standard_deviation_free_throws_made,
+          stddev_samp(fta) AS standard_deviation_free_throws_attempted,
+          stddev_samp(ft_pct) AS standard_deviation_free_throw_percentage,
+          stddev_samp(stl) AS standard_deviation_steals,
+          stddev_samp(blk) AS standard_deviation_blocks,
+          stddev_samp(tov) AS standard_deviation_turnovers,
+          stddev_samp(pf) AS standard_deviation_personal_fouls,
+          stddev_samp(plus_minus) AS standard_deviation_plus_minus
+        FROM "player_game_logs"
+        WHERE player_id = ANY(${playerIds}::text[]) AND season = ${season} AND season_type = ${seasonType}
+        GROUP BY player_id, player_name;
+      `;
+  }
+
+  private async getPlayersWithAboveStandardDeviation(season: string, seasonType: string, averageOrBelowAveragePlayers: PlayerStats[], playerstandardDeviationResults: StandDeviationResult[]) {
+    // For each player, find the games where they performed above their standard deviation for points, assists, and rebounds + averageOrBelowAveragePlayers points, assists, and rebounds
+    const gamesAboveStandardDeviation: PlayerSDGameStats[] = [];
+    for (const player of averageOrBelowAveragePlayers) {
+      const playerStandardDeviation = playerstandardDeviationResults.find(result => result.player_id === player.playerId);
+      if (!playerStandardDeviation) {
+        continue;
+      }
+
+      const games: PlayerSDGameStatsQueryResult[] = await this.prisma.$queryRaw`
+          WITH total_results AS (
+            SELECT *,
+              (pts >= ${player.pts.toNumber()} + COALESCE(${playerStandardDeviation.standard_deviation_points.mul(2)}, 0)) AS pts_match,
+              (ast >= ${player.ast.toNumber()} + COALESCE(${playerStandardDeviation.standard_deviation_assists.mul(2)}, 0)) AS ast_match,
+              (reb >= ${player.reb.toNumber()} + COALESCE(${playerStandardDeviation.standard_deviation_rebounds.mul(2)}, 0)) AS reb_match,
+              ((pts + ${player.pts.toNumber()}) / COALESCE(${playerStandardDeviation.standard_deviation_points}, 0)) AS pts_std_deviation,
+              ((ast + ${player.pts.toNumber()}) / COALESCE(${playerStandardDeviation.standard_deviation_points}, 0)) AS asts_std_deviation,
+              ((reb + ${player.pts.toNumber()}) / COALESCE(${playerStandardDeviation.standard_deviation_points}, 0)) AS reb_std_deviation,
+              (pts >= ${player.pts.toNumber()} + COALESCE(${playerStandardDeviation.standard_deviation_points.mul(2)}, 0))::int
+              + (ast >= ${player.ast.toNumber()} + COALESCE(${playerStandardDeviation.standard_deviation_assists.mul(2)}, 0))::int
+              + (reb >= ${player.reb.toNumber()} + COALESCE(${playerStandardDeviation.standard_deviation_rebounds.mul(2)}, 0))::int
+              AS match_count
+            FROM "player_game_logs"
+            WHERE player_id = ${player.playerId}
+              AND season = ${season}
+              AND season_type = ${seasonType}
+              AND (
+                pts >= ${player.pts.toNumber()} + COALESCE(${playerStandardDeviation.standard_deviation_points.mul(2)}, 0)
+                OR
+                ast >= ${player.ast.toNumber()} + COALESCE(${playerStandardDeviation.standard_deviation_assists.mul(2)}, 0)
+                OR
+                reb >= ${player.reb.toNumber()} + COALESCE(${playerStandardDeviation.standard_deviation_rebounds.mul(2)}, 0)
+              )
+            GROUP BY id
+          )
+          SELECT *
+          FROM (
+              SELECT *, COUNT(*) OVER() as total_rows
+              FROM total_results
+          ) subquery
+          WHERE total_rows >= 5;
+      `;
+
+      if (games.length > 0) {
+        gamesAboveStandardDeviation.push({
+          playerName: player.playerName,
+          stats: player,
+          player_game_logs: games,
+          count: games.length,
+        });
+      }
+    }
+
+    return gamesAboveStandardDeviation;
+  }
+
 
   async findUndervaluedPlayers({
     season,
@@ -74,7 +149,28 @@ export class PlayerStatsService {
         ...averageOrBelowAverageCenters,
     ];
 
-    return averageOrBelowAveragePlayers;
+    // Get the player ids of the players who are below average or average
+    const playerIds: string[] = averageOrBelowAveragePlayers.map(player => player.playerId);
+
+    // Calculate the standard deviation of the stats for the players who are below average or average
+    const calculateStandarDeviationOfPlayers = await this.calculateStandardDeviationOfPlayerStats(season, seasonType, playerIds);
+
+    // For each player,
+    // find the games where they
+    // performed above their standard deviation for
+    // points, assists, or rebounds
+    // + averageOrBelowAveragePlayers points, assists, or rebounds
+    // by 2 standard deviations
+    const playesWithGamesAboveSD = await this.getPlayersWithAboveStandardDeviation(season, seasonType, averageOrBelowAveragePlayers, calculateStandarDeviationOfPlayers);
+
+    // Sort the gamesAboveStandardDeviation array
+    // by the count of games above standard deviation in ascending order
+    playesWithGamesAboveSD.sort((a, b) => b.count - a.count);
+
+    return {
+      players: playesWithGamesAboveSD,
+      playerCount: playesWithGamesAboveSD.length,
+    };
   }
 
 }
