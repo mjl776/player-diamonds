@@ -111,7 +111,7 @@ export class PlayerStatsService {
           COUNT(*) AS match_count,
           json_agg(matches.* ORDER BY game_date) as player_game_logs
         FROM matches
-        WHERE match_count >= 10
+        WHERE match_count >= 5
         GROUP BY player_id, player_name
     `;
 
