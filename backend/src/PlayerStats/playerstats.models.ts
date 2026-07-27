@@ -2,7 +2,7 @@ import { Decimal } from "@prisma/client/runtime/library";
 import { PlayerStats, PlayerGameLogs } from "generated/prisma/client";
 
 // Controller Types
-export type FindUnderValuedPlayersQuery = {
+export type SeasonAndSeasonTypeQuery = {
     season: string;
     seasonType: string;
 }

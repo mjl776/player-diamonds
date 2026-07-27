@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../src/prisma.service';
 import { PlayerLeagueAverages } from '../../generated/prisma/client';
-import { FindUnderValuedPlayersQuery, PlayerSDGameStats, PlayerSDGameStatsQueryResult, StandDeviationResult } from './playerstats.models';
+import { SeasonAndSeasonTypeQuery, PlayerSDGameStats, PlayerSDGameStatsQueryResult, StandDeviationResult } from './playerstats.models';
 import { PlayerStats } from 'generated/prisma/client';
 
 @Injectable()
@@ -76,9 +76,9 @@ export class PlayerStatsService {
       WITH thresholds AS (
           SELECT
             ${playerIds}::text[] AS playerIds,
-            ${ptsThresholds}::int[] AS ptsThresholds,
-            ${astThresholds}::int[] AS astThresholds,
-            ${rebThresholds}::int[] AS rebThresholds
+            ${ptsThresholds}::float8[] AS ptsThresholds,
+            ${astThresholds}::float8[] AS astThresholds,
+            ${rebThresholds}::float8[] AS rebThresholds
       ),
        matches as (
         SELECT
@@ -145,13 +145,13 @@ export class PlayerStatsService {
     const playerIds = eligiblePlayers.map(({ player }) => player.playerId);
 
     const ptsThresholds = eligiblePlayers.map(({ player, sd }) =>
-      player.pts.toNumber() + sd.standard_deviation_points.toNumber() * 2);
+      player.pts.toNumber() + sd.standard_deviation_points.toNumber() * 2.0);
 
     const astThresholds = eligiblePlayers.map(({ player, sd }) =>
-      player.ast.toNumber() + sd.standard_deviation_assists.toNumber() * 2);
+      player.ast.toNumber() + sd.standard_deviation_assists.toNumber() * 2.0);
 
     const rebThresholds = eligiblePlayers.map(({ player, sd }) =>
-      player.reb.toNumber() + sd.standard_deviation_rebounds.toNumber() * 2);
+      player.reb.toNumber() + sd.standard_deviation_rebounds.toNumber() * 2.0);
 
     // Create standard deviation thresholds to show standard deviations of players
     // via the player_game_logs table for points, assists, and rebounds
@@ -168,7 +168,7 @@ export class PlayerStatsService {
   async findUndervaluedPlayers({
     season,
     seasonType,
-  }: FindUnderValuedPlayersQuery) {
+  }: SeasonAndSeasonTypeQuery) {
 
     // Find the average stats for the given season and season type
     const averagePlayerStatsGuard = await this.getSeasonAverageStats(season, seasonType, "G");
@@ -213,6 +213,21 @@ export class PlayerStatsService {
       players: playesWithGamesAboveSD,
       playerCount: playesWithGamesAboveSD.length,
     };
+  }
+
+  async getAvailableSeasons() {
+    return await this.prisma.playerStats.findMany({
+      distinct: ['season'],
+      select: { season: true },
+      orderBy: { season: 'desc' },
+    });
+  }
+
+  async getAvailableSeasonTypes() {
+    return await this.prisma.playerStats.findMany({
+      distinct: ['seasonType'],
+      select: { seasonType: true },
+    });
   }
 
 }

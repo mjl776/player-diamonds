@@ -2,12 +2,12 @@
 .container {
   display: flex;
   align-items: center;
-  justify-content: center;
   flex-direction: column;
   flex: 1;
   background: linear-gradient(135deg, var(--foreground), var(--tertiary));
   background-attachment: fixed;
   color: var(--background);
+  padding: 10px;
 }
 
 .playerList{
