@@ -91,7 +91,7 @@ export const UndervaluedPlayerFinder: FC = () => {
             }
 
             { players && players.length > 0 ? (
-            <>
+            <div className={styles.tableContainerWrapper}>
                 <h1 className={styles.sectionHeader}> Table of Rest of Players </h1>
                 <table className={styles.tableContainer}>
                     <thead>
@@ -110,7 +110,7 @@ export const UndervaluedPlayerFinder: FC = () => {
                         )) }
                     </tbody>
                 </table>
-            </>
+            </div>
             ) : <></>
             }
         </div>
