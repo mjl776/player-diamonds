@@ -7,6 +7,7 @@ import { PlayerListRow } from "../PlayerListRow";
 import { OptionSelectionToggleBar } from "../OptionSelectionToggleBar";
 import { Season, SeasonType } from "@/types/toggleOptionTypes";
 import { PlayerCardCarousel } from "../PlayerCardCarousel";
+import { API_BASE_URL } from "@/lib/api";
 
 export const UndervaluedPlayerFinder: FC = () => {
 
@@ -26,7 +27,7 @@ export const UndervaluedPlayerFinder: FC = () => {
 
     const fetchPlayers = async (season: string, seaonType: string) => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/find-undervalued-players?season=${season}&seasonType=${seaonType}`);
+            const response = await fetch(`${API_BASE_URL}/find-undervalued-players?season=${season}&seasonType=${seaonType}`);
             const data = await response.json();
             setPlayers(data.players);
         } catch (error) {
@@ -37,7 +38,7 @@ export const UndervaluedPlayerFinder: FC = () => {
     useEffect(() => {
         const fetchAvailableSeasons = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/available-seasons`)
+                const response = await fetch(`${API_BASE_URL}/available-seasons`)
                 const data = await response.json();
                 setSeasons(data);
                 console.log('Fetched available seasons:', data);
@@ -51,7 +52,7 @@ export const UndervaluedPlayerFinder: FC = () => {
     useEffect(() => {
         const fetchAvailableSeasonTypes = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/available-season-types`)
+                const response = await fetch(`${API_BASE_URL}/available-season-types`)
                 const data = await response.json();
                 setSeasonTypes(data);
             } catch (error) {
