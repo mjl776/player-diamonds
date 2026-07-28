@@ -7,7 +7,7 @@ async function bootstrap() {
   BigInt.prototype['toJSON'] = function () {
     return this.toString();
   };
-  app.enableCors({ origin: ['http://localhost:3000', 'playerdiamonds.com', 'www.playerdiamonds.com'] });
+  app.enableCors({ origin: ['http://localhost:3000', 'https://playerdiamonds.com', 'https://www.playerdiamonds.com'] });
   await app.listen(process.env.PORT ?? 8080);
 }
 bootstrap();
