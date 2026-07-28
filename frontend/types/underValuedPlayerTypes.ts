@@ -115,6 +115,11 @@ export type PlayerGameLogObject = {
     rebMatch: boolean;
     ptsStdDeviation: string;
     matchCount: number;
+    stl_match: boolean;
+    ast_match_count: number;
+    reb_match_count: number;
+    stl_match_count: number;
+    pts_match_count: number;
 };
 
 export type PlayerObject = {

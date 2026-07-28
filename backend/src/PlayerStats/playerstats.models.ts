@@ -45,8 +45,13 @@ export type PlayerSDGameStatsQueryResult =
         pts_match: boolean;
         ast_match: boolean;
         reb_match: boolean;
+        stl_match: boolean;
         pts_std_deviation: Decimal;
         match_count: number;
         player_game_logs: PlayerSDGameStatsQueryResult[];
+        ast_match_count: number;
+        reb_match_count: number;
+        stl_match_count: number;
+        pts_match_count: number;
     }
 
