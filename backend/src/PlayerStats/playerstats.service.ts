@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../src/prisma.service';
 import { PlayerLeagueAverages, PlayerStats } from '../../generated/prisma/client';
-import { SeasonAndSeasonTypeQuery, PlayerSDGameStats, PlayerSDGameStatsQueryResult, StandDeviationResult } from './playerstats.models';
+import { PlayerSDGameStats, PlayerSDGameStatsQueryResult, StandDeviationResult, FindUndervaluedPlayersQueryDto } from './playerstats.models';
 
 @Injectable()
 export class PlayerStatsService {
@@ -164,9 +164,8 @@ export class PlayerStatsService {
     const stlsThresholds = eligiblePlayers.map(({ player, sd }) =>
       player.stl.toNumber() + sd.standard_deviation_steals.toNumber() * 2.0);
 
-    // Create standard deviation thresholds to show standard deviations of players
-    // via the player_game_logs table for points, assists, and rebounds
-
+      // Create standard deviation thresholds to show standard deviations of players
+      // via the player_game_logs table for points, assists, and rebounds, steals
       return {
         playerIds,
         ptsThresholds,
@@ -179,28 +178,31 @@ export class PlayerStatsService {
   async findUndervaluedPlayers({
     season,
     seasonType,
-  }: SeasonAndSeasonTypeQuery) {
+    positions,
+  }: FindUndervaluedPlayersQueryDto) {
 
-    // Find the average stats for the given season and season type
-    const averagePlayerStatsGuard = await this.getSeasonAverageStats(season, seasonType, "G");
-    const averagePlayerStatsForward = await this.getSeasonAverageStats(season, seasonType, "F");
-    const averagePlayerStatsCenter = await this.getSeasonAverageStats(season, seasonType, "C");
+    // Create a map of pending promises for Promise.all to get the average stats for each position
+    const averageStatsPromises = positions.map(position => this.getSeasonAverageStats(season, seasonType, position));
 
-    if (!averagePlayerStatsCenter || !averagePlayerStatsForward || !averagePlayerStatsGuard) {
-        throw new Error(`No average stats found for season ${season} and season type ${seasonType}`);
-    };
+    // Wait for all the promises to resolve and store the results in a map
+    const averageStatsResults = await Promise.all(averageStatsPromises);
 
-    // Find all postions whose stats are at or below average and compare against their perspective position class
-    const averageOrBelowAverageGuards = await this.getAverageOrBelowAveragePlayers(season, seasonType, averagePlayerStatsGuard, "G");
-    const averageOrBelowAverageForwards = await this.getAverageOrBelowAveragePlayers(season, seasonType, averagePlayerStatsForward, "F");
-    const averageOrBelowAverageCenters = await this.getAverageOrBelowAveragePlayers(season, seasonType, averagePlayerStatsCenter, "C");
+    // Create a map of all postions whose stats are at or below average from our averageStatsResults to be awaited for a promise
+    const averageOrBelowAveragePlayersPromises = positions.map((position, index) => {
+        const averageStats = averageStatsResults[index];
 
-    // Combine all the results into a single array
-    const averageOrBelowAveragePlayers = [
-        ...averageOrBelowAverageGuards,
-        ...averageOrBelowAverageForwards,
-        ...averageOrBelowAverageCenters,
-    ];
+        if (!averageStats) {
+            throw new Error(`No average stats found for position ${position} in season ${season} and season type ${seasonType}`);
+        }
+
+        return this.getAverageOrBelowAveragePlayers(season, seasonType, averageStats, position);
+    });
+
+    // Wait for all the promises to resolve and store the results in a map
+    const averageOrBelowAveragePlayersResults = await Promise.all(averageOrBelowAveragePlayersPromises);
+
+    // flatten the array of arrays of players into a single array of players
+    const averageOrBelowAveragePlayers = averageOrBelowAveragePlayersResults.flat();
 
     // Get the player ids of the players who are below average or average
     const playerIds = averageOrBelowAveragePlayers.map(player => player.playerId);

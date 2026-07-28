@@ -1,13 +1,13 @@
 import { Controller, Get, Query } from "@nestjs/common";
 import { PlayerStatsService } from "./playerstats.service";
-import { SeasonAndSeasonTypeQuery } from "./playerstats.models";
+import { FindUndervaluedPlayersQueryDto } from "./playerstats.models";
 
 @Controller()
 export class PlayerStatsController {
     constructor(private readonly playerStatsService: PlayerStatsService) {}
 
     @Get('find-undervalued-players')
-    findUndervaluedPlayers(@Query() query: SeasonAndSeasonTypeQuery) {
+    findUndervaluedPlayers(@Query() query: FindUndervaluedPlayersQueryDto) {
         return this.playerStatsService.findUndervaluedPlayers(query);
     }
 

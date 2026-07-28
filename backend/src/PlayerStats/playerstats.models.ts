@@ -1,10 +1,20 @@
 import { Decimal } from "@prisma/client/runtime/library";
 import { PlayerStats, PlayerGameLogs } from "../../generated/prisma/client";
+import { IsArray, IsString } from 'class-validator';
+import { Transform } from 'class-transformer';
 
-// Controller Types
-export type SeasonAndSeasonTypeQuery = {
-    season: string;
-    seasonType: string;
+// Cotroller query DTOs
+export class FindUndervaluedPlayersQueryDto {
+  @IsString()
+  season: string;
+
+  @IsString()
+  seasonType: string;
+
+  @Transform(({ value }) => Array.isArray(value) ? value : [value])
+  @IsArray()
+  @IsString({ each: true })
+  positions: string[];
 }
 
 // Service types

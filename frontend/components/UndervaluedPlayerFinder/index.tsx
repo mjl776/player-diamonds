@@ -26,10 +26,19 @@ export const UndervaluedPlayerFinder: FC = () => {
         setSelectedSeasonType(seasonType);
     }
 
-    const fetchPlayers = async (season: string, seaonType: string) => {
+    const fetchPlayers = async (season: string, seasonType: string) => {
         try {
             setLoading(true);
-            const response = await fetch(`${API_BASE_URL}/find-undervalued-players?season=${season}&seasonType=${seaonType}`);
+
+
+            const params = new URLSearchParams();
+            params.append('season', season);
+            params.append('seasonType', seasonType);
+            const positions: string[] = ['G', 'F', 'C', 'G-F', 'F-C', 'F-G', 'C-F'];
+
+            positions.forEach(position => params.append('positions', position));
+
+            const response = await fetch(`${API_BASE_URL}/find-undervalued-players?${params.toString()}`);
             const data = await response.json();
             setPlayers(data.players);
         } catch (error) {
