@@ -1,5 +1,5 @@
 import { Decimal } from "@prisma/client/runtime/library";
-import { PlayerStats, PlayerGameLogs } from "generated/prisma/client";
+import { PlayerStats, PlayerGameLogs } from "../../generated/prisma/client";
 
 // Controller Types
 export type SeasonAndSeasonTypeQuery = {
