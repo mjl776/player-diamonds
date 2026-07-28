@@ -1,4 +1,4 @@
-import { LoadingSpinnerProps } from '@/types/LoadingSpinnerTypes';
+import { LoadingSpinnerProps } from '@/types/loadingSpinnerTypes';
 import React, { FC } from 'react';
 import ClipLoader from 'react-spinners/ClipLoader';
 import styles from './page.module.css'
