@@ -5,9 +5,10 @@
   flex-direction: column;
   flex: 1;
   background: linear-gradient(135deg, var(--foreground), var(--tertiary));
-  background-attachment: fixed;
+  background-attachment: scroll;
   color: var(--background);
   padding: 10px;
+  overflow-x: hidden
 }
 
 .header {
@@ -22,14 +23,17 @@
 
 .playerList{
     display: grid;
-    grid-auto-flow: column;
     grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
 }
 
 .tableContainer {
     background: var(--foreground);
-    border-radius: 1.5rem;
+    border-radius: 1.2rem;
+    overflow: hidden;
     padding: 2rem;
+    table-layout: fixed;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .tableHeader {
@@ -46,3 +50,26 @@
     justify-content: center;
 }
 
+.tableContainerWrapper {
+    overflow-x: auto
+}
+
+@media screen and (max-width: 768px) {
+    .sectionHeader {
+        font-size: 1.0rem;
+    }
+
+    .header {
+        font-size: 2.0rem;
+    }
+
+    .tableHeader {
+        font-size: 0.70rem;
+        padding: 0px 8px;
+    }
+
+    .tableHeader:nth-child(2),
+    .tableHeader:nth-child(3) {
+        display: none;
+    }
+}
