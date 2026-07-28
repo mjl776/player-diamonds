@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../src/prisma.service';
-import { PlayerLeagueAverages } from '../../generated/prisma/client';
+import { PlayerLeagueAverages, PlayerStats } from '../../generated/prisma/client';
 import { SeasonAndSeasonTypeQuery, PlayerSDGameStats, PlayerSDGameStatsQueryResult, StandDeviationResult } from './playerstats.models';
-import { PlayerStats } from 'generated/prisma/client';
 
 @Injectable()
 export class PlayerStatsService {
