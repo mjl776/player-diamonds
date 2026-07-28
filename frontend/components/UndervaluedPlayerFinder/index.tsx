@@ -8,6 +8,7 @@ import { OptionSelectionToggleBar } from "../OptionSelectionToggleBar";
 import { Season, SeasonType } from "@/types/toggleOptionTypes";
 import { PlayerCardCarousel } from "../PlayerCardCarousel";
 import { API_BASE_URL } from "@/lib/api";
+import { LoadingSpinner } from "../LoadingSpinner";
 
 export const UndervaluedPlayerFinder: FC = () => {
 
@@ -16,7 +17,7 @@ export const UndervaluedPlayerFinder: FC = () => {
     const [seasons, setSeasons] = useState<Season[]>([]);
     const [seasonTypes, setSeasonTypes] = useState<SeasonType[]>([]);
     const [players, setPlayers] = useState<PlayerObject[]>([]);
-
+    const [loading, setLoading] = useState<boolean>(false);
     const onSelectedSeasonChange = (season: string) => {
         setSelectedSeason(season);
     }
@@ -27,11 +28,14 @@ export const UndervaluedPlayerFinder: FC = () => {
 
     const fetchPlayers = async (season: string, seaonType: string) => {
         try {
+            setLoading(true);
             const response = await fetch(`${API_BASE_URL}/find-undervalued-players?season=${season}&seasonType=${seaonType}`);
             const data = await response.json();
             setPlayers(data.players);
         } catch (error) {
             console.error('Error fetching undervalued players:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -82,12 +86,11 @@ export const UndervaluedPlayerFinder: FC = () => {
             />
 
             {
-                players && players.length > 0 && (
+                players && players.length > 0 ? (
                     <>
                         <h1 className={styles.sectionHeader}> Top 3 undervalued players </h1>
                         <PlayerCardCarousel players={players.slice(0,3)} />
-                    </>
-                )
+                    </>) : (<LoadingSpinner isLoading={loading} text={'Finding Players'}/>)
             }
 
             { players && players.length > 0 ? (
