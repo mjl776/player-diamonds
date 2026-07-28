@@ -69,7 +69,7 @@ export class PlayerStatsService {
   private async getPlayersWithAboveStandardDeviation(season: string, seasonType: string, averageOrBelowAveragePlayers: PlayerStats[], playerstandardDeviationResults: StandDeviationResult[]) {
 
       // Get player threshold arrays for SD arrays for points, assists, and rebounds
-      const { playerIds, ptsThresholds, astThresholds, rebThresholds } = this.getSDThresholds(averageOrBelowAveragePlayers, playerstandardDeviationResults);
+      const { playerIds, ptsThresholds, astThresholds, rebThresholds, stlsThresholds } = this.getSDThresholds(averageOrBelowAveragePlayers, playerstandardDeviationResults);
 
       const games: PlayerSDGameStatsQueryResult[] = await this.prisma.$queryRaw `
       WITH thresholds AS (
@@ -77,7 +77,8 @@ export class PlayerStatsService {
             ${playerIds}::text[] AS playerIds,
             ${ptsThresholds}::float8[] AS ptsThresholds,
             ${astThresholds}::float8[] AS astThresholds,
-            ${rebThresholds}::float8[] AS rebThresholds
+            ${rebThresholds}::float8[] AS rebThresholds,
+            ${stlsThresholds}::float8[] AS stlsThresholds
       ),
        matches as (
         SELECT
@@ -88,26 +89,34 @@ export class PlayerStatsService {
           g.pts >= u.ptsThreshold AS pts_match,
           g.ast >= u.astThreshold AS ast_match,
           g.reb >= u.rebThreshold AS reb_match,
+          g.stl >= u.stlsThreshold AS stl_match,
           COUNT(*) OVER (PARTITION BY g.player_id) AS match_count
         FROM thresholds
-        JOIN LATERAL unnest(thresholds.ptsThresholds, thresholds.astThresholds, thresholds.rebThresholds, thresholds.playerIds)
-          AS u(ptsThreshold, astThreshold, rebThreshold, player_id) ON true
+        JOIN LATERAL unnest(thresholds.ptsThresholds, thresholds.astThresholds, thresholds.rebThresholds, thresholds.stlsThresholds, thresholds.playerIds)
+          AS u(ptsThreshold, astThreshold, rebThreshold, stlsThreshold, player_id) ON true
         JOIN player_game_logs g ON g.player_id = u.player_id
         WHERE
           season = ${season}
           AND season_type = ${seasonType}
+          AND g.min >= 10
           AND (
             g.pts >= u.ptsThreshold
             OR
             g.ast >= u.astThreshold
             OR
             g.reb >= u.rebThreshold
+            OR
+            g.stl >= u.stlsThreshold
         ))
 
         SELECT
           player_id as "playerId",
           player_name as "playerName",
           COUNT(*) AS match_count,
+          COUNT(*) FILTER (WHERE ast_match) AS ast_match_count,
+          COUNT(*) FILTER (WHERE pts_match) AS pts_match_count,
+          COUNT(*) FILTER (WHERE reb_match) AS reb_match_count,
+          COUNT(*) FILTER (WHERE stl_match) AS stl_match_count,
           json_agg(matches.* ORDER BY game_date) as player_game_logs
         FROM matches
         WHERE match_count >= 5
@@ -152,6 +161,9 @@ export class PlayerStatsService {
     const rebThresholds = eligiblePlayers.map(({ player, sd }) =>
       player.reb.toNumber() + sd.standard_deviation_rebounds.toNumber() * 2.0);
 
+    const stlsThresholds = eligiblePlayers.map(({ player, sd }) =>
+      player.stl.toNumber() + sd.standard_deviation_steals.toNumber() * 2.0);
+
     // Create standard deviation thresholds to show standard deviations of players
     // via the player_game_logs table for points, assists, and rebounds
 
@@ -160,9 +172,9 @@ export class PlayerStatsService {
         ptsThresholds,
         astThresholds,
         rebThresholds,
+        stlsThresholds,
       }
   }
-
 
   async findUndervaluedPlayers({
     season,
