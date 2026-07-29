@@ -55,6 +55,20 @@
     flex-direction: column;
     max-width: 800px;
     justify-content: center;
+    padding: 0.5rem;
+    font-family: var(--font-secondary);
+}
+
+.tableDescriptionContainer {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    flex-direction: column;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0.5rem;
+    font-family: var(--font-secondary);
+    text-align: left;
 }
 
 .tableContainerWrapper {

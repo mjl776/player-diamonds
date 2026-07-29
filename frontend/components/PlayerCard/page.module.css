@@ -20,6 +20,26 @@
     flex-wrap: wrap;
 }
 
+.averageStatValues {
+    font-weight: bold;
+}
+
+.averagesLabel {
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: var(--tertiary);
+}
+
+.diffValuePositive {
+    color: var(--positiveColor);
+    font-weight: bold;
+}
+
+.diffValueNegative {
+    color: var(--negativeColor);
+    font-weight: bold;
+}
+
 .playerName {
     font-size: 1.5rem;
     font-weight: bold;

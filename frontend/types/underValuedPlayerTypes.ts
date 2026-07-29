@@ -132,6 +132,8 @@ export type PlayerObject = {
     ast_match_count: number;
     reb_match_count: number;
     stl_match_count: number;
+    sd_game_averages_by_player: Record<string, number>;
+    sd_stats_difference_from_average: Record<string, number>;
     games_by_match_category: Record<string, PlayerGameLogObject[]>;
 }
 

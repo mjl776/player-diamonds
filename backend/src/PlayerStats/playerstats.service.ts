@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../src/prisma.service';
 import { PlayerLeagueAverages, PlayerStats } from '../../generated/prisma/client';
 import { PlayerSDGameStats, PlayerSDGameStatsQueryResult, StandDeviationResult, FindUndervaluedPlayersQueryDto } from './playerstats.models';
+import { Decimal } from '@prisma/client/runtime/index-browser';
 
 @Injectable()
 export class PlayerStatsService {
@@ -117,6 +118,10 @@ export class PlayerStatsService {
           COUNT(*) FILTER (WHERE pts_match) AS pts_match_count,
           COUNT(*) FILTER (WHERE reb_match) AS reb_match_count,
           COUNT(*) FILTER (WHERE stl_match) AS stl_match_count,
+          AVG(pts) AS avg_pts,
+          AVG(ast) AS avg_ast,
+          AVG(reb) AS avg_reb,
+          AVG(stl) AS avg_stl,
           json_agg(matches.* ORDER BY game_date) as player_game_logs
         FROM matches
         WHERE match_count >= 5
@@ -139,6 +144,13 @@ export class PlayerStatsService {
       reb_match_count: Number(row.reb_match_count),
       stl_match_count: Number(row.stl_match_count),
       games_by_match_category: this.getSDGamesByMatchCategoryGames(row.player_game_logs),
+      sd_game_averages_by_player: this.getSDGameAveragesByPlayer(row.avg_pts, row.avg_stl, row.avg_ast, row.avg_reb),
+      sd_stats_difference_from_average: this.getDifferenceBetweenPlayerStatsAndAverageSDStats(statsByPlayerId.get(row.playerId)!, {
+        pts: row.avg_pts,
+        ast: row.avg_ast,
+        reb: row.avg_reb,
+        stl: row.avg_stl,
+      }),
     }));
 
     return gamesAboveStandardDeviation;
@@ -206,6 +218,24 @@ export class PlayerStatsService {
 
     return gamesByMatchCategory;
 
+  }
+
+  private getSDGameAveragesByPlayer (avgPoints: Decimal, averageSteals: Decimal, averageAssists: Decimal, averageRebounds: Decimal) {
+    return {
+      avgPts: Number(avgPoints.toFixed(1)),
+      avgStl: Number(averageSteals.toFixed(1)),
+      avgAst: Number(averageAssists.toFixed(1)),
+      avgReb: Number(averageRebounds.toFixed(1)),
+    }
+  }
+
+  private getDifferenceBetweenPlayerStatsAndAverageSDStats(playerStats: PlayerStats, averageStats: { pts: Decimal, ast: Decimal, reb: Decimal, stl: Decimal }) {
+    return {
+      ptsDiff: Number((Number(averageStats.pts) - Number(playerStats.pts)).toFixed(1)),
+      astDiff: Number((Number(averageStats.ast) - Number(playerStats.ast)).toFixed(1)),
+      rebDiff: Number((Number(averageStats.reb) - Number(playerStats.reb)).toFixed(1)),
+      stlDiff: Number((Number(averageStats.stl) - Number(playerStats.stl)).toFixed(1)),
+    }
   }
 
   async findUndervaluedPlayers({
