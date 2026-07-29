@@ -4,13 +4,22 @@
     padding: 3px;
 }
 
+.tableRow:nth-child(even) {
+    background-color: var(--tertiary);
+}
+
 .tableData {
     text-align: left;
     color: white;
-    padding: 0px 20px;
+    padding: 0px 5px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap
+}
+
+.tableData:nth-child(1) {
+    padding: 0px 20px;
+    font-weight: bold;
 }
 
 @media screen and (max-width: 768px) {

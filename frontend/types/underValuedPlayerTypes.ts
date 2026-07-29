@@ -127,5 +127,10 @@ export type PlayerObject = {
     count: number;
     stats: PlayerStatsObject;
     player_game_logs: PlayerGameLogObject[];
+    pts_match_count: number;
+    stls_match_count: number;
+    ast_match_count: number;
+    reb_match_count: number;
+    stl_match_count: number;
 }
 

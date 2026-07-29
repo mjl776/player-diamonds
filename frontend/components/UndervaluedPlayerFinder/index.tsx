@@ -5,7 +5,7 @@ import { PlayerObject, PlayerStatsObject } from "../../types/underValuedPlayerTy
 import styles from "./page.module.css";
 import { PlayerListRow } from "../PlayerListRow";
 import { OptionSelectionToggleBar } from "../OptionSelectionToggleBar";
-import { Season, SeasonType } from "@/types/toggleOptionTypes";
+import { Season, Position } from "@/types/toggleOptionTypes";
 import { PlayerCardCarousel } from "../PlayerCardCarousel";
 import { API_BASE_URL } from "@/lib/api";
 import { LoadingSpinner } from "../LoadingSpinner";
@@ -13,29 +13,32 @@ import { LoadingSpinner } from "../LoadingSpinner";
 export const UndervaluedPlayerFinder: FC = () => {
 
     const [selectedSeason, setSelectedSeason] = useState<string>('');
-    const [selectedSeasonType, setSelectedSeasonType] = useState<string>('');
+    const [selectedPositions, setSelectedPostions] = useState<string[]>([]);
     const [seasons, setSeasons] = useState<Season[]>([]);
-    const [seasonTypes, setSeasonTypes] = useState<SeasonType[]>([]);
+    const [positions, setPositions] = useState<Position[]>([]);
     const [players, setPlayers] = useState<PlayerObject[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const onSelectedSeasonChange = (season: string) => {
         setSelectedSeason(season);
     }
 
-    const onSelectSeasonType = (seasonType: string) => {
-        setSelectedSeasonType(seasonType);
-    }
+    const onSelectedPositions = (position: string) => {
+        console.log('Selected position:', selectedPositions);
+        if (selectedPositions.includes(position)) {
+          setSelectedPostions(selectedPositions.filter((p) => p !== position));
+        } else {
+          setSelectedPostions([...selectedPositions, position]);
+        }
+    };
 
-    const fetchPlayers = async (season: string, seasonType: string) => {
+    const fetchPlayers = async (season: string, positions: string[]) => {
         try {
             setLoading(true);
 
-
             const params = new URLSearchParams();
             params.append('season', season);
-            params.append('seasonType', seasonType);
-            const positions: string[] = ['G', 'F', 'C', 'G-F', 'F-C', 'F-G', 'C-F'];
-
+            params.append('seasonType', 'Regular Season');
+            console.log('Selected positions:', positions);
             positions.forEach(position => params.append('positions', position));
 
             const response = await fetch(`${API_BASE_URL}/find-undervalued-players?${params.toString()}`);
@@ -65,9 +68,9 @@ export const UndervaluedPlayerFinder: FC = () => {
     useEffect(() => {
         const fetchAvailableSeasonTypes = async () => {
             try {
-                const response = await fetch(`${API_BASE_URL}/available-season-types`)
+                const response = await fetch(`${API_BASE_URL}/available-positions`)
                 const data = await response.json();
-                setSeasonTypes(data);
+                setPositions(data);
             } catch (error) {
                 console.error('Error fetching available season types:', error);
             }
@@ -86,23 +89,23 @@ export const UndervaluedPlayerFinder: FC = () => {
             </div>
             <OptionSelectionToggleBar
                 seasons={seasons}
-                seasonTypes={seasonTypes}
+                positions={positions}
                 selectedSeason={selectedSeason}
-                selectedSeasonType={selectedSeasonType}
+                selectedPositions={selectedPositions}
                 onSelectedSeasonChange={onSelectedSeasonChange}
-                onSelectSeasonType={onSelectSeasonType}
+                onSelectedPosition={onSelectedPositions}
                 onFindPlayersClick={fetchPlayers}
             />
 
             {
-                players && players.length > 0 ? (
+                !loading && players && players.length > 0 ? (
                     <>
                         <h1 className={styles.sectionHeader}> Top 3 undervalued players </h1>
                         <PlayerCardCarousel players={players.slice(0,3)} />
                     </>) : (<LoadingSpinner isLoading={loading} text={'Finding Players'}/>)
             }
 
-            { players && players.length > 0 ? (
+            { !loading && players && players.length > 0 ? (
             <div className={styles.tableContainerWrapper}>
                 <h1 className={styles.sectionHeader}> Table of Rest of Players </h1>
                 <table className={styles.tableContainer}>
@@ -116,7 +119,7 @@ export const UndervaluedPlayerFinder: FC = () => {
                             <th className={styles.tableHeader}>Rebounds</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody className={styles.tableBody}>
                         { players.map((player: PlayerObject, index) => (
                             <PlayerListRow key={`player-composite-${index}`} player={player} />
                         )) }

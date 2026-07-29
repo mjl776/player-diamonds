@@ -6,11 +6,11 @@ import { OptionSelectionToggleBarProps } from '@/types/toggleOptionTypes';
 
 export const OptionSelectionToggleBar: FC <OptionSelectionToggleBarProps> = ({
     seasons,
-    seasonTypes,
+    positions,
     selectedSeason,
-    selectedSeasonType,
+    selectedPositions,
     onSelectedSeasonChange,
-    onSelectSeasonType,
+    onSelectedPosition,
     onFindPlayersClick,
 }) => {
     return (
@@ -19,8 +19,14 @@ export const OptionSelectionToggleBar: FC <OptionSelectionToggleBarProps> = ({
                     <h1> Season </h1>
                     <div className={styles.seasonButtonContainer}>
                         { seasons && seasons.map((season, index) => {
+                            const isActive = selectedSeason == season.season;
                             return (
-                                <button key={`season-${index}`} className={selectedSeason  == season.season ? styles.seasonButtontoggleOptionActive : styles.seasonButtontoggleOption} onClick={() => onSelectedSeasonChange(season.season)}>
+                                <button
+                                    key={`season-${index}`}
+                                    className={isActive ? styles.seasonButtontoggleOptionActive : styles.seasonButtontoggleOption}
+                                    onClick={() => onSelectedSeasonChange(season.season)}
+                                    onDoubleClick={() => isActive && onSelectedSeasonChange('')}
+                                >
                                     {season.season}
                                 </button>
                             )
@@ -28,18 +34,24 @@ export const OptionSelectionToggleBar: FC <OptionSelectionToggleBarProps> = ({
                     </div>
                 </div>
                 <div className = {styles.seasonSelectionContainer}>
-                    <h1 className={styles.seasonsHeader}> Season Type </h1>
+                    <h1 className={styles.seasonsHeader}> Positions </h1>
                     <div className={styles.seasonButtonContainer}>
-                        { seasonTypes && seasonTypes.map((seasonType, index) => {
+                        { positions && positions.map((position, index) => {
+                            const isActive = selectedPositions.includes(position.position);
                             return (
-                                <button key={`season-type-${index}`} className={selectedSeasonType  == seasonType.seasonType ? styles.seasonButtontoggleOptionActive : styles.seasonButtontoggleOption} onClick={() => onSelectSeasonType(seasonType.seasonType)}>
-                                    {seasonType.seasonType}
+                                <button
+                                    key={`position-${index}`}
+                                    className={isActive ? styles.seasonButtontoggleOptionActive : styles.seasonButtontoggleOption}
+                                    onClick={() => onSelectedPosition(position.position)}
+                                    onDoubleClick={() => isActive && onSelectedPosition(position.position)}
+                                >
+                                    {position.position}
                                 </button>
                             )
                         })}
                     </div>
                 </div>
-                <button className={styles.findPlayersButton} onClick={() => onFindPlayersClick(selectedSeason, selectedSeasonType)}> Find Players </button>
+                <button className={styles.findPlayersButton} onClick={() => onFindPlayersClick(selectedSeason, selectedPositions)}> Find Players </button>
         </div>
     );
 }

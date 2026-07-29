@@ -8,6 +8,7 @@
     background-color: var(--tertiary);
     padding: 1rem;
     flex-wrap: wrap;
+    border-radius: 1rem;
 }
 
 .seasonsHeader {
@@ -52,10 +53,11 @@
 
 .seasonButtonContainer {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: flex-start;
     flex-direction: row;
     gap: 10px;
+    flex-wrap: wrap
 }
 
 .findPlayersButton {
@@ -70,7 +72,14 @@
     flex-shrink: 0;
 }
 
-@media (max-width: 668px) {
+.findPlayersButton:hover {
+    background-color: var(--tertiary);
+    color: var(--foreground);
+    border: 2px solid var(--foreground);
+    cursor: pointer;
+}
+
+@media (max-width: 368px) {
     .toggleBarContainer {
         flex-direction: column;
         align-items: center;

@@ -9,7 +9,11 @@ export const PlayerCardComponent: FC<PlayerStatsProps>= ({ player, rank }) => {
             <div className={styles.cardContainer}>
                 <h1 className={styles.rank}> Rank: { rank }</h1>
                 <h1 className={styles.playerName}> { player.playerName }</h1>
-                <div> Games Two SD above average statline:  { player.count }</div>
+                <div className={styles.playerGameText}> Games Two SD above average stats:  { player.count }</div>
+                <div className={styles.playerGameText}> Games Two SD above Points Average: { player.pts_match_count }</div>
+                <div className={styles.playerGameText}> Games Two SD above Rebounds Average: { player.reb_match_count }</div>
+                <div className={styles.playerGameText}> Games Two SD above Assists Average: { player.ast_match_count }</div>
+                <div className={styles.playerGameText}> Games Two SD above Steals Average: { player.stl_match_count }</div>
             </div>
         </div>
     )

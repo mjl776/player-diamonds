@@ -4,6 +4,9 @@
   --background: #ffffff;
   --foreground: #171717;
   --tertiary: #808080;
+  --fourth-color: #f0f0f0;
+  --font-primary: var(--font-grotesk);
+  --font-secondary: var(--font-mono);
 }
 
 @theme inline {
@@ -16,5 +19,5 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-grotesk);
 }
