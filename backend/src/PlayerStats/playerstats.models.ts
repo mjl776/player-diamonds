@@ -74,5 +74,6 @@ export type PlayerSDGameStatsQueryResult =
         avg_ast: Decimal;
         avg_reb: Decimal;
         avg_stl: Decimal;
+        avg_min: Decimal;
     }
 

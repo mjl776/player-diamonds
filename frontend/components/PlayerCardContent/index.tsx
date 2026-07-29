@@ -17,25 +17,25 @@ export const PlayerCardContent: FC<PlayerStatsProps> = ({ player, rank, onStatCl
             <div className={styles.sdGameAverages}>
                 <span> <span className={styles.averagesLabel}>Avg. SD. Pts:</span> <span className={styles.averageStatValues}> { player.sd_game_averages_by_player.avgPts } </span>
                 <span className={ptsDiff >= 0 ? styles.diffValuePositive : styles.diffValueNegative}>
-                    { ptsDiff > 0 ? (<span>+</span>): (<span>-</span>)}
+                    { ptsDiff > 0 ? (<span>+</span>): (<></>)}
                     {ptsDiff}
                     </span>
                 </span>
                 <span> <span className={styles.averagesLabel}>Avg. SD. Reb:</span> <span className={styles.averageStatValues}> { player.sd_game_averages_by_player.avgReb } </span>
                 <span className={rebDiff >= 0 ? styles.diffValuePositive : styles.diffValueNegative}>
-                    { rebDiff > 0 ? (<span>+</span>): (<span>-</span>)}
+                    { rebDiff > 0 ? (<span>+</span>): (<></>)}
                     {rebDiff}
                 </span>
                 </span>
                 <span> <span className={styles.averagesLabel}>Avg. SD. Ast:</span> <span className={styles.averageStatValues}> { player.sd_game_averages_by_player.avgAst } </span>
                 <span className={astDiff >= 0 ? styles.diffValuePositive : styles.diffValueNegative}>
-                    { astDiff > 0 ? (<span>+</span>): (<span>-</span>)}
+                    { astDiff > 0 ? (<span>+</span>): (<></>)}
                     {astDiff}
                 </span>
                 </span>
                 <span> <span className={styles.averagesLabel}>Avg. SD. Stl:</span> <span className={styles.averageStatValues}> { player.sd_game_averages_by_player.avgStl } </span>
                 <span className={stlDiff >= 0 ? styles.diffValuePositive : styles.diffValueNegative}>
-                    { stlDiff >= 0 ? (<span>+</span>): (<span>-</span>)}
+                    { stlDiff >= 0 ? (<span>+</span>): (<></>)}
                     {stlDiff}
                 </span>
                 </span>

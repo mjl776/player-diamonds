@@ -10,6 +10,8 @@ import { PlayerCardCarousel } from "../PlayerCardCarousel";
 import { API_BASE_URL } from "@/lib/api";
 import { LoadingSpinner } from "../LoadingSpinner";
 import { DEFAULT_POSITIONS_LIST, DEFAULT_SEASON_LIST } from "@/constants";
+import { LeagueAverages } from "../LeagueAverages";
+import { LeagueAveragesType } from "@/types/getLeagueAverages";
 
 export const UndervaluedPlayerFinder: FC = () => {
 
@@ -17,6 +19,7 @@ export const UndervaluedPlayerFinder: FC = () => {
     const [selectedPositions, setSelectedPostions] = useState<string[]>([]);
     const [seasons, setSeasons] = useState<Season[]>(DEFAULT_SEASON_LIST);
     const [positions, setPositions] = useState<Position[]>(DEFAULT_POSITIONS_LIST);
+    const [leagueAverages, setLeagueAverages] = useState<LeagueAveragesType[]>([]);
     const [players, setPlayers] = useState<PlayerObject[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const onSelectedSeasonChange = (season: string) => {
@@ -51,6 +54,7 @@ export const UndervaluedPlayerFinder: FC = () => {
             const response = await fetch(`${API_BASE_URL}/find-undervalued-players?${params.toString()}`);
             const data = await response.json();
             setPlayers(data.players);
+            setLeagueAverages(data.leagueAverages);
         } catch (error) {
             console.error('Error fetching undervalued players:', error);
         } finally {
@@ -103,6 +107,19 @@ export const UndervaluedPlayerFinder: FC = () => {
             />
 
             {
+                !loading && leagueAverages && leagueAverages.length > 0 ? ( <>
+                    <h1 className={styles.sectionHeader}> League Averages </h1>
+                    <div className={styles.descriptionContainer}>
+                        This is a the leagues averages for each position in the selected regular season of all players for each position.
+                        Each player that is evaluated as potentally undervalued is compared to the league averages for their position in the selected season
+                        and the query checks if the player has also played a minimum of 20 games in the selected season.
+                    </div>
+                    <LeagueAverages leagueAverages={leagueAverages} />
+                    </>
+                ) : <></>
+            }
+
+            {
                 !loading && players && players.length > 0 ? (
                     <>
                         <h1 className={styles.sectionHeader}> Top 3 undervalued players </h1>
@@ -122,21 +139,25 @@ export const UndervaluedPlayerFinder: FC = () => {
                 <div className={styles.tableDescriptionContainer}>
                     This is a table of all the players who outperformed their average statline in one or more of 4 key stat catergories the most times in the selected season at least 5 times.
                     The table is sorted by the number of games the player outperformed their average statline in one or more of 4 key stat catergories.
+                    The table displays the average statline of all the games they have outperformed at least 1 of the 4 statistical categories of
+                    Points, Assists, Rebounds, and Steals.
                 </div>
                 <table className={styles.tableContainer}>
                     <thead>
                         <tr>
                             <th className={styles.tableHeader}>Name</th>
+                            <th className={styles.tableHeader}>Rank</th>
                             <th className={styles.tableHeader}>GP</th>
                             <th className={styles.tableHeader}>Min</th>
                             <th className={styles.tableHeader}>Points</th>
                             <th className={styles.tableHeader}>Assists</th>
                             <th className={styles.tableHeader}>Rebounds</th>
+                            <th className={styles.tableHeader}>Steals</th>
                         </tr>
                     </thead>
                     <tbody className={styles.tableBody}>
                         { players.map((player: PlayerObject, index) => (
-                            <PlayerListRow key={`player-composite-${index}`} player={player} />
+                            <PlayerListRow key={`player-composite-${index}`} player={player} rank={index + 1}/>
                         )) }
                     </tbody>
                 </table>

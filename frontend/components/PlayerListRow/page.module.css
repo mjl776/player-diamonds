@@ -22,6 +22,16 @@
     font-weight: bold;
 }
 
+.negativeValue {
+    color: var(--negativeColor);
+    font-weight: bold;
+}
+
+.positiveValue {
+    color: var(--positiveColor);
+    font-weight: bold;
+}
+
 @media screen and (max-width: 768px) {
     .tableData {
         font-size: 0.75rem;

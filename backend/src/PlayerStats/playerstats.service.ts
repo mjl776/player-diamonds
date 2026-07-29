@@ -3,12 +3,19 @@ import { PrismaService } from '../../src/prisma.service';
 import { PlayerLeagueAverages, PlayerStats } from '../../generated/prisma/client';
 import { PlayerSDGameStats, PlayerSDGameStatsQueryResult, StandDeviationResult, FindUndervaluedPlayersQueryDto } from './playerstats.models';
 import { Decimal } from '@prisma/client/runtime/index-browser';
+import { min } from 'class-validator';
 
 @Injectable()
 export class PlayerStatsService {
   constructor(private readonly prisma: PrismaService) {}
 
   private async getSeasonAverageStats(season: string, seasonType: string, position: string) {
+    return await this.prisma.playerLeagueAverages.findFirst({
+        where: { season: season, seasonType: seasonType, position: position},
+    });
+  }
+
+  private async getLeagueAllAveragesByPosition(season: string, seasonType: string, position: string) {
     return await this.prisma.playerLeagueAverages.findFirst({
         where: { season: season, seasonType: seasonType, position: position},
     });
@@ -118,6 +125,7 @@ export class PlayerStatsService {
           COUNT(*) FILTER (WHERE pts_match) AS pts_match_count,
           COUNT(*) FILTER (WHERE reb_match) AS reb_match_count,
           COUNT(*) FILTER (WHERE stl_match) AS stl_match_count,
+          AVG(min) AS avg_min,
           AVG(pts) AS avg_pts,
           AVG(ast) AS avg_ast,
           AVG(reb) AS avg_reb,
@@ -144,8 +152,9 @@ export class PlayerStatsService {
       reb_match_count: Number(row.reb_match_count),
       stl_match_count: Number(row.stl_match_count),
       games_by_match_category: this.getSDGamesByMatchCategoryGames(row.player_game_logs),
-      sd_game_averages_by_player: this.getSDGameAveragesByPlayer(row.avg_pts, row.avg_stl, row.avg_ast, row.avg_reb),
+      sd_game_averages_by_player: this.getSDGameAveragesByPlayer(row.avg_min, row.avg_pts, row.avg_stl, row.avg_ast, row.avg_reb),
       sd_stats_difference_from_average: this.getDifferenceBetweenPlayerStatsAndAverageSDStats(statsByPlayerId.get(row.playerId)!, {
+        min: row.avg_min,
         pts: row.avg_pts,
         ast: row.avg_ast,
         reb: row.avg_reb,
@@ -220,8 +229,9 @@ export class PlayerStatsService {
 
   }
 
-  private getSDGameAveragesByPlayer (avgPoints: Decimal, averageSteals: Decimal, averageAssists: Decimal, averageRebounds: Decimal) {
+  private getSDGameAveragesByPlayer (avgMin: Decimal, avgPoints: Decimal, averageSteals: Decimal, averageAssists: Decimal, averageRebounds: Decimal) {
     return {
+      avgMin: Number((avgMin).toFixed(1)),
       avgPts: Number(avgPoints.toFixed(1)),
       avgStl: Number(averageSteals.toFixed(1)),
       avgAst: Number(averageAssists.toFixed(1)),
@@ -229,8 +239,9 @@ export class PlayerStatsService {
     }
   }
 
-  private getDifferenceBetweenPlayerStatsAndAverageSDStats(playerStats: PlayerStats, averageStats: { pts: Decimal, ast: Decimal, reb: Decimal, stl: Decimal }) {
+  private getDifferenceBetweenPlayerStatsAndAverageSDStats(playerStats: PlayerStats, averageStats: { min: Decimal, pts: Decimal, ast: Decimal, reb: Decimal, stl: Decimal }) {
     return {
+      minDiff: Number((Number(averageStats.min) - Number(playerStats.min)).toFixed(1)),
       ptsDiff: Number((Number(averageStats.pts) - Number(playerStats.pts)).toFixed(1)),
       astDiff: Number((Number(averageStats.ast) - Number(playerStats.ast)).toFixed(1)),
       rebDiff: Number((Number(averageStats.reb) - Number(playerStats.reb)).toFixed(1)),
@@ -243,6 +254,10 @@ export class PlayerStatsService {
     seasonType,
     positions,
   }: FindUndervaluedPlayersQueryDto) {
+
+    // Create a map of pending promises for Promise.all to get the league averages for each position
+    const leagueAveragesPromises = positions.map(position => this.getLeagueAllAveragesByPosition(season, seasonType, position));
+    const leagueAveragesResults = await Promise.all(leagueAveragesPromises);
 
     // Create a map of pending promises for Promise.all to get the average stats for each position
     const averageStatsPromises = positions.map(position => this.getSeasonAverageStats(season, seasonType, position));
@@ -288,6 +303,7 @@ export class PlayerStatsService {
     return {
       players: playesWithGamesAboveSD,
       playerCount: playesWithGamesAboveSD.length,
+      leagueAverages: leagueAveragesResults,
     };
   }
 
