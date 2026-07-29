@@ -46,3 +46,19 @@
 .playerGameText:hover {
     text-decoration: underline;
 }
+
+.playerPosition {
+    color: var(--tertiary);
+}
+
+.playerHeight {
+    font-weight: bold;
+}
+
+.playerTeam {
+    font-weight: bold;
+}
+
+.playerCountry {
+    font-weight: bold;
+}

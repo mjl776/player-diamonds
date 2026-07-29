@@ -37,6 +37,11 @@ export class PlayerStatsService {
             ast: { lte: averagePlayerStats.ast },
             pts: { lte: averagePlayerStats.pts },
         },
+        include: {
+          playerInfo: {
+            select: { position: true, height: true, teamAbbreviation: true, country: true },
+          },
+        },
     });
   }
 
