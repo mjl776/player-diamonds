@@ -19,7 +19,7 @@ export class PlayerStatsService {
     // Then we can add more advanced stats to the query later
     return await this.prisma.playerStats.findMany({
         where: {
-            playerInfo: {
+            playerInfo: position === 'all' ? undefined : {
               position: position,
             },
             season: season,
@@ -138,6 +138,7 @@ export class PlayerStatsService {
       pts_match_count: Number(row.pts_match_count),
       reb_match_count: Number(row.reb_match_count),
       stl_match_count: Number(row.stl_match_count),
+      games_by_match_category: this.getSDGamesByMatchCategoryGames(row.player_game_logs),
     }));
 
     return gamesAboveStandardDeviation;
@@ -177,6 +178,34 @@ export class PlayerStatsService {
         rebThresholds,
         stlsThresholds,
       }
+  }
+
+  private getSDGamesByMatchCategoryGames(gamesAboveStandardDeviation: PlayerSDGameStatsQueryResult[]) {
+    // For each player, find the games where they performed above their standard deviation for points, assists, and rebounds + averageOrBelowAveragePlayers points, assists, and rebounds
+    const gamesByMatchCategory: Record<string, PlayerSDGameStatsQueryResult[]> = {
+      points: [],
+      assists: [],
+      rebounds: [],
+      steals: [],
+    };
+
+    for (const game of gamesAboveStandardDeviation) {
+      if (game.pts_match) {
+        gamesByMatchCategory.points.push(game);
+      }
+      if (game.ast_match) {
+        gamesByMatchCategory.assists.push(game);
+      }
+      if (game.reb_match) {
+        gamesByMatchCategory.rebounds.push(game);
+      }
+      if (game.stl_match) {
+        gamesByMatchCategory.steals.push(game);
+      }
+    }
+
+    return gamesByMatchCategory;
+
   }
 
   async findUndervaluedPlayers({
