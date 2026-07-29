@@ -48,6 +48,11 @@ export type PlayerSDGameStats = {
     stats: PlayerStats;
     player_game_logs: PlayerSDGameStatsQueryResult[];
     count: number;
+    ast_match_count: number;
+    reb_match_count: number;
+    stl_match_count: number;
+    pts_match_count: number;
+    games_by_match_category: Record<string, PlayerSDGameStatsQueryResult[]>;
 }
 
 export type PlayerSDGameStatsQueryResult =
