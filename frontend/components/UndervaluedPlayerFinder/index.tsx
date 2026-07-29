@@ -89,10 +89,8 @@ export const UndervaluedPlayerFinder: FC = () => {
         <div className={styles.container}>
             <h1 className={styles.header}>Undervalued Player Finder</h1>
             <div className={styles.descriptionContainer}>
-                <p>
-                    Welcome to the Undervalued Player Finder. Select the Season and Season Type and it will return a list of players who performed 2
-                    standard deviations above their average statline
-                </p>
+                Welcome to the Undervalued Player Finder. Select the Season and it will return a list of players who performed 2
+                standard deviations above their average statline in one or more of 4 key stat catergories the most times in the selected season. You can also select positions to filter the results by position.
             </div>
             <OptionSelectionToggleBar
                 seasons={seasons}
@@ -108,13 +106,23 @@ export const UndervaluedPlayerFinder: FC = () => {
                 !loading && players && players.length > 0 ? (
                     <>
                         <h1 className={styles.sectionHeader}> Top 3 undervalued players </h1>
+                        <div className={styles.descriptionContainer}>
+                                The top 3 undervalued players are players who performed 2 standard deviations above their average statline in one or more of 4 key stat catergories
+                                the most times in the selected season. The + sign indicates that the player performed above their average statline in that stat category, while the - sign indicates that the player performed below their average statline in that stat category.
+                                The average of the SD game averages is calculated by taking the average of the player's SD game averages in each stat category.
+                                The difference from the average is calculated by taking the difference between the player's SD game averages and the average of the SD game averages.
+                        </div>
                         <PlayerCardCarousel players={players.slice(0,3)} />
                     </>) : (<LoadingSpinner isLoading={loading} text={'Finding Players'}/>)
             }
 
             { !loading && players && players.length > 0 ? (
             <div className={styles.tableContainerWrapper}>
-                <h1 className={styles.sectionHeader}> Table of Rest of Players </h1>
+                <h1 className={styles.sectionHeader}> Table of All of Player Average Stats </h1>
+                <div className={styles.tableDescriptionContainer}>
+                    This is a table of all the players who outperformed their average statline in one or more of 4 key stat catergories the most times in the selected season at least 5 times.
+                    The table is sorted by the number of games the player outperformed their average statline in one or more of 4 key stat catergories.
+                </div>
                 <table className={styles.tableContainer}>
                     <thead>
                         <tr>

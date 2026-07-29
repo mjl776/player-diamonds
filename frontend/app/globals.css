@@ -7,6 +7,8 @@
   --fourth-color: #f0f0f0;
   --font-primary: var(--font-grotesk);
   --font-secondary: var(--font-mono);
+  --positiveColor: #00ff00;
+  --negativeColor: #ff0000;
 }
 
 @theme inline {
