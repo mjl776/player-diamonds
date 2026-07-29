@@ -85,7 +85,7 @@ export type PlayerGameLogObject = {
     teamAbbreviation: string;
     teamName: string;
     gameId: string;
-    gameDate: string;
+    game_date: string;
     matchup: string;
     wl: string;
     min: number;
@@ -132,5 +132,6 @@ export type PlayerObject = {
     ast_match_count: number;
     reb_match_count: number;
     stl_match_count: number;
+    games_by_match_category: Record<string, PlayerGameLogObject[]>;
 }
 

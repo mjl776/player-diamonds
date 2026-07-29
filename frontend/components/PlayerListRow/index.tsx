@@ -3,7 +3,6 @@ import { FC } from 'react'
 import styles from './page.module.css'
 
 export const PlayerListRow: FC<PlayerStatsProps> = ({ player }) => {
-    console.log(player);
     return (
         <tr className={styles.tableRow}>
             <td className={styles.tableData}>{player.playerName}</td>

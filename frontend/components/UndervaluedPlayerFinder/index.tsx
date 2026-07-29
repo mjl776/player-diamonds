@@ -40,7 +40,13 @@ export const UndervaluedPlayerFinder: FC = () => {
             params.append('season', season);
             params.append('seasonType', 'Regular Season');
             console.log('Selected positions:', positions);
-            positions.forEach(position => params.append('positions', position));
+
+            if (positions.length === 0) {
+               params.append('positions', 'all');
+            }
+            else {
+                positions.forEach(position => params.append('positions', position));
+            }
 
             const response = await fetch(`${API_BASE_URL}/find-undervalued-players?${params.toString()}`);
             const data = await response.json();
