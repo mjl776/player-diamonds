@@ -75,6 +75,8 @@ export type PlayerStatsObject = {
     playerInfo: {
         height: string;
         position: string;
+        teamAbbreviation: string | 'Free Agent';
+        country: string;
     }
 };
 

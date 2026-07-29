@@ -10,6 +10,8 @@ export const PlayerCardContent: FC<PlayerStatsProps> = ({ player, rank, onStatCl
             <h1 className={styles.rank}> Rank: { rank }</h1>
             <h1 className={styles.playerName}> { player.playerName } <span className={styles.playerPosition}> { player.stats.playerInfo.position } </span> </h1>
             <h1 className={styles.playerHeight}> { player.stats.playerInfo.height } </h1>
+            <h1 className={styles.playerTeam}> Team: { player.stats.playerInfo.teamAbbreviation } </h1>
+            <h1 className={styles.playerCountry}> { player.stats.playerInfo.country } </h1>
             <div className={styles.gameAverages}>
                 <span> <span className={styles.averagesLabel}>Avg. Pts:</span> <span className={styles.averageStatValues}> { player.stats.pts } </span> </span>
                 <span> <span className={styles.averagesLabel}>Avg. Reb:</span> <span className={styles.averageStatValues}> { player.stats.reb } </span> </span>
