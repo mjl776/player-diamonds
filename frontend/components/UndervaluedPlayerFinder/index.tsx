@@ -9,13 +9,14 @@ import { Season, Position } from "@/types/toggleOptionTypes";
 import { PlayerCardCarousel } from "../PlayerCardCarousel";
 import { API_BASE_URL } from "@/lib/api";
 import { LoadingSpinner } from "../LoadingSpinner";
+import { DEFAULT_POSITIONS_LIST, DEFAULT_SEASON_LIST } from "@/constants";
 
 export const UndervaluedPlayerFinder: FC = () => {
 
     const [selectedSeason, setSelectedSeason] = useState<string>('');
     const [selectedPositions, setSelectedPostions] = useState<string[]>([]);
-    const [seasons, setSeasons] = useState<Season[]>([]);
-    const [positions, setPositions] = useState<Position[]>([]);
+    const [seasons, setSeasons] = useState<Season[]>(DEFAULT_SEASON_LIST);
+    const [positions, setPositions] = useState<Position[]>(DEFAULT_POSITIONS_LIST);
     const [players, setPlayers] = useState<PlayerObject[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const onSelectedSeasonChange = (season: string) => {
