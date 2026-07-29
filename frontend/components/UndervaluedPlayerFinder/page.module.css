@@ -19,6 +19,7 @@
     font-size: 2.0rem;
     margin-top: 1rem;
     padding: 1rem;
+    text-align: center;
 }
 
 .playerList{
@@ -34,24 +35,34 @@
     table-layout: fixed;
     width: 100%;
     box-sizing: border-box;
+    border-collapse: collapse;
 }
 
 .tableHeader {
     font-weight: 600;
-    padding: 0px 20px;
+    padding: 0px 5px;
     font-size: 0.875rem;
     text-align: left;
+}
+
+.tableHeader:nth-child(1) {
+    padding: 0px 20px;
 }
 
 .descriptionContainer {
     display: flex;
     align-items: flex-start;
     flex-direction: column;
+    max-width: 800px;
     justify-content: center;
 }
 
 .tableContainerWrapper {
     overflow-x: auto
+}
+
+.tableBody  {
+    background-color: var(--foreground);
 }
 
 @media screen and (max-width: 768px) {

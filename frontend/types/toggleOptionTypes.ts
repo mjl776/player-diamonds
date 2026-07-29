@@ -3,16 +3,16 @@ export type Season = {
     season: string;
 }
 
-export type SeasonType = {
-    seasonType: string;
+export type Position = {
+    position: string;
 }
 
 export type OptionSelectionToggleBarProps = {
     seasons: Season[];
-    seasonTypes: SeasonType[];
+    positions: Position[];
     selectedSeason: string;
-    selectedSeasonType: string;
+    selectedPositions: string[];
     onSelectedSeasonChange: (season: string) => void;
-    onSelectSeasonType: (seasonType: string) => void;
-    onFindPlayersClick: (season: string, seasonType: string) => void;
+    onSelectedPosition: (positions: string) => void;
+    onFindPlayersClick: (season: string, positions: string[]) => void;
 }

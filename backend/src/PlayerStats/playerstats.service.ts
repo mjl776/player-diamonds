@@ -134,6 +134,10 @@ export class PlayerStatsService {
       stats: statsByPlayerId.get(row.playerId)!,
       player_game_logs: row.player_game_logs,
       count: Number(row.match_count),
+      ast_match_count: Number(row.ast_match_count),
+      pts_match_count: Number(row.pts_match_count),
+      reb_match_count: Number(row.reb_match_count),
+      stl_match_count: Number(row.stl_match_count),
     }));
 
     return gamesAboveStandardDeviation;
@@ -240,6 +244,13 @@ export class PlayerStatsService {
     return await this.prisma.playerStats.findMany({
       distinct: ['seasonType'],
       select: { seasonType: true },
+    });
+  }
+
+  async getAvailablePositionTypes() {
+    return await this.prisma.playerInfo.findMany({
+      distinct: ['position'],
+      select: { position: true },
     });
   }
 

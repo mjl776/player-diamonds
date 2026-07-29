@@ -2,8 +2,6 @@
 .cardContainer {
     border: var(--foreground) 2px solid;
     border-radius: 2rem;
-    height: 15rem;
-    width: 15rem;
     display: flex;
     align-items: flex-start;
     flex-direction: column;
@@ -18,8 +16,6 @@
     align-items: center;
     text-align: left;
     justify-content: center;
-    flex: 1;
-    background-attachment: fixed;
     color: var(--background);
     flex-wrap: wrap;
 }
@@ -29,4 +25,6 @@
     font-weight: bold;
 }
 
-
+.playerGameText {
+    font-size: 0.85rem
+}

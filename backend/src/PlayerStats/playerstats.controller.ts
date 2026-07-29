@@ -21,4 +21,9 @@ export class PlayerStatsController {
         return this.playerStatsService.getAvailableSeasonTypes();
     }
 
+    @Get('available-positions')
+    getAvailablePositions() {
+        return this.playerStatsService.getAvailablePositionTypes();
+    }
+
 }
