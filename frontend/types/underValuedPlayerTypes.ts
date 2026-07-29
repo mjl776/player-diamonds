@@ -83,7 +83,7 @@ export type PlayerGameLogObject = {
     playerName: string;
     teamId: string;
     teamAbbreviation: string;
-    teamName: string;
+    team_name: string;
     gameId: string;
     game_date: string;
     matchup: string;

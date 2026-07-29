@@ -13,6 +13,8 @@ export const GameLogsOverlay: FC<GameLogsProps> = ({ playerName, games, onClose 
                             <thead>
                                 <tr>
                                     <th className={styles.tableHeader}>Date</th>
+                                    <th className={styles.tableHeader}>Team</th>
+                                    <th className={styles.tableHeader}>Match Up</th>
                                     <th className={styles.tableHeader}>Min</th>
                                     <th className={styles.tableHeader}>Points</th>
                                     <th className={styles.tableHeader}>Assists</th>
@@ -23,6 +25,8 @@ export const GameLogsOverlay: FC<GameLogsProps> = ({ playerName, games, onClose 
                                 { games.length > 0 && games.map((game: PlayerGameLogObject, index) => (
                                     <tr key={`game-log-${index}`}>
                                         <td className={styles.tableCell}>{game.game_date}</td>
+                                        <td className={styles.tableCell}>{game.team_name}</td>
+                                        <td className={styles.tableCell}>{game.matchup}</td>
                                         <td className={styles.tableCell}>{game.min}</td>
                                         <td className={styles.tableCell}>{game.pts}</td>
                                         <td className={styles.tableCell}>{game.ast}</td>
