@@ -72,6 +72,10 @@ export type PlayerStatsObject = {
     wnbaFantasyPtsRank: number;
     dd2Rank: number;
     td3Rank: number;
+    playerInfo: {
+        height: string;
+        position: string;
+    }
 };
 
 export type PlayerGameLogObject = {

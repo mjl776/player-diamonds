@@ -46,3 +46,7 @@
 .playerGameText:hover {
     text-decoration: underline;
 }
+
+.playerPosition {
+    color: var(--tertiary);
+}
