@@ -8,6 +8,7 @@
     background-color: var(--tertiary);
     padding: 1rem;
     flex-wrap: wrap;
+    font-weight: bold;
     border-radius: 1rem;
 }
 
