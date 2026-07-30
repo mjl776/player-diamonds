@@ -83,6 +83,10 @@
     font-size: 1rem;
   }
 
+  .descriptionContainer {
+    font-size: 0.7rem;
+  }
+
   .header {
     font-size: 2rem;
   }
@@ -95,6 +99,7 @@
   .tableHeader:nth-child(2),
   .tableHeader:nth-child(3),
   .tableHeader:nth-child(4),
+  .tableHeader:nth-child(7),
   .tableHeader:nth-child(8) {
     display: none;
   }

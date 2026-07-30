@@ -1,10 +1,7 @@
 "use client";
 
 import { FC, useEffect, useState } from "react";
-import {
-  PlayerObject,
-  PlayerStatsObject,
-} from "../../types/underValuedPlayerTypes";
+import { PlayerObject } from "../../types/underValuedPlayerTypes";
 import styles from "./page.module.css";
 import { PlayerListRow } from "../PlayerListRow";
 import { OptionSelectionToggleBar } from "../OptionSelectionToggleBar";
@@ -100,11 +97,10 @@ export const UndervaluedPlayerFinder: FC = () => {
     <div className={styles.container}>
       <h1 className={styles.header}>Undervalued Player Finder</h1>
       <div className={styles.descriptionContainer}>
-        Welcome to the Undervalued Player Finder. Select the Season and it will
-        return a list of players who performed 2 standard deviations above their
-        average statline in one or more of 4 key stat catergories the most times
-        in the selected season. You can also select positions to filter the
-        results by position.
+        Select a season to find players who hit 2 standard deviations above
+        their average statline most often across 4 key stat categories.
+        Optionally filter by position — if none are selected, players are
+        compared against overall position averages.
       </div>
       <OptionSelectionToggleBar
         seasons={seasons}
@@ -120,12 +116,9 @@ export const UndervaluedPlayerFinder: FC = () => {
         <>
           <h1 className={styles.sectionHeader}> League Averages </h1>
           <div className={styles.descriptionContainer}>
-            This is a the leagues averages for each position in the selected
-            regular season of all players for each position. Each player that is
-            evaluated as potentally undervalued is compared to the league
-            averages for their position in the selected season and the query
-            checks if the player has also played a minimum of 20 games in the
-            selected season.
+            League averages by position for the selected regular season.
+            Potentially undervalued players are compared against their
+            position&apos;s averages, requiring at least 20 games played.
           </div>
           <LeagueAverages leagueAverages={leagueAverages} />
         </>
@@ -137,17 +130,11 @@ export const UndervaluedPlayerFinder: FC = () => {
         <>
           <h1 className={styles.sectionHeader}> Top 3 undervalued players </h1>
           <div className={styles.descriptionContainer}>
-            The top 3 undervalued players are players who performed 2 standard
-            deviations above their average statline in one or more of 4 key stat
-            catergories the most times in the selected season. The + sign
-            indicates that the player performed above their average statline in
-            that stat category, while the - sign indicates that the player
-            performed below their average statline in that stat category. The
-            average of the SD game averages is calculated by taking the average
-            of the player's SD game averages in each stat category. The
-            difference from the average is calculated by taking the difference
-            between the player's SD game averages and the average of the SD game
-            averages.
+            The 3 players who most often hit 2 standard deviations above their
+            average statline this season. A + means the player outperformed that
+            stat category&apos;s average; a - means they underperformed.
+            &quot;Difference from average&quot; is how far a player&apos;s SD
+            game average deviates from the group&apos;s SD game average.
           </div>
           <PlayerCardCarousel players={players.slice(0, 3)} />
         </>
@@ -162,14 +149,10 @@ export const UndervaluedPlayerFinder: FC = () => {
             Table of All of Player Average Stats{" "}
           </h1>
           <div className={styles.tableDescriptionContainer}>
-            This is a table of all the players who outperformed their average
-            statline in one or more of 4 key stat catergories the most times in
-            the selected season at least 5 times. The table is sorted by the
-            number of games the player outperformed their average statline in
-            one or more of 4 key stat catergories. The table displays the
-            average statline of all the games they have outperformed at least 1
-            of the 4 statistical categories of Points, Assists, Rebounds, and
-            Steals.
+            All players who outperformed their average statline in Points,
+            Assists, Rebounds, or Steals at least 5 times this season, sorted by
+            how often they did so. Stats shown are their average across those
+            outperforming games.
           </div>
           <table className={styles.tableContainer}>
             <thead>

@@ -6,7 +6,7 @@
   --tertiary: #808080;
   --fourth-color: #f0f0f0;
   --font-primary: var(--font-grotesk);
-  --font-secondary: var(--font-mono);
+  --font-secondary: var(--font-inter);
   --positiveColor: #00ff00;
   --negativeColor: #ff0000;
 }
@@ -15,7 +15,7 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-inter: var(--font-inter);
 }
 
 body {
