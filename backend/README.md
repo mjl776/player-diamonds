@@ -14,7 +14,7 @@ NestJS
 
 Railway
 
-# Endpoints
+## Endpoints
 
 /find-undervalued players
 
