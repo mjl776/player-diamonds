@@ -11,7 +11,7 @@ import {
   FindUndervaluedPlayersQueryDto,
 } from './playerstats.models';
 import { Decimal } from '@prisma/client/runtime/index-browser';
-import { min } from 'class-validator';
+import { SeasonAndSeasonTypeCheck } from './utils';
 
 @Injectable()
 export class PlayerStatsService {
@@ -22,6 +22,12 @@ export class PlayerStatsService {
     seasonType: string,
     position: string,
   ) {
+    if (!SeasonAndSeasonTypeCheck(season, seasonType) || !position) {
+      throw Error(
+        'Season and seasonType and position are required parameters.',
+      );
+    }
+
     return await this.prisma.playerLeagueAverages.findFirst({
       where: { season: season, seasonType: seasonType, position: position },
     });
@@ -32,6 +38,12 @@ export class PlayerStatsService {
     seasonType: string,
     position: string,
   ) {
+    if (!SeasonAndSeasonTypeCheck(season, seasonType) || !position) {
+      throw Error(
+        'Season and seasonType and position are required parameters.',
+      );
+    }
+
     return await this.prisma.playerLeagueAverages.findFirst({
       where: { season: season, seasonType: seasonType, position: position },
     });
@@ -43,6 +55,16 @@ export class PlayerStatsService {
     averagePlayerStats: PlayerLeagueAverages,
     position: string,
   ) {
+    if (
+      !SeasonAndSeasonTypeCheck(season, seasonType) ||
+      !position ||
+      !averagePlayerStats
+    ) {
+      throw Error(
+        'Season and seasonType and position and averagePlayerStats are required parameters.',
+      );
+    }
+
     // Initially in our query use very basic
     // stats to find players who are below average or average players,
     // Then we can add more advanced stats to the query later
@@ -79,6 +101,16 @@ export class PlayerStatsService {
     seasonType: string,
     playerIds: string[],
   ): Promise<StandDeviationResult[]> {
+    if (
+      !SeasonAndSeasonTypeCheck(season, seasonType) ||
+      !playerIds ||
+      playerIds.length === 0
+    ) {
+      throw Error(
+        'Season and seasonType and playerIds are required parameters.',
+      );
+    }
+
     // calcuate the standard deviation of the stats for the players who are below average or average
     return await this.prisma.$queryRaw`
         SELECT
@@ -116,6 +148,18 @@ export class PlayerStatsService {
     averageOrBelowAveragePlayers: PlayerStats[],
     playerstandardDeviationResults: StandDeviationResult[],
   ) {
+    if (
+      !SeasonAndSeasonTypeCheck(season, seasonType) ||
+      !averageOrBelowAveragePlayers ||
+      averageOrBelowAveragePlayers.length === 0 ||
+      !playerstandardDeviationResults ||
+      playerstandardDeviationResults.length === 0
+    ) {
+      throw Error(
+        'Season and seasonType and averageOrBelowAveragePlayers and playerstandardDeviationResults are required parameters.',
+      );
+    }
+
     // Get player threshold arrays for SD arrays for points, assists, and rebounds
     const {
       playerIds,
@@ -232,6 +276,17 @@ export class PlayerStatsService {
     averageOrBelowAveragePlayers: PlayerStats[],
     playerStandardDeviation: StandDeviationResult[],
   ) {
+    if (
+      !averageOrBelowAveragePlayers ||
+      averageOrBelowAveragePlayers.length === 0 ||
+      !playerStandardDeviation ||
+      playerStandardDeviation.length === 0
+    ) {
+      throw Error(
+        'averageOrBelowAveragePlayers and playerStandardDeviation are required parameters.',
+      );
+    }
+
     // Get the player ids of the players who are below average or average
     const eligiblePlayers = averageOrBelowAveragePlayers
       .map((player) => {
@@ -281,6 +336,13 @@ export class PlayerStatsService {
   private getSDGamesByMatchCategoryGames(
     gamesAboveStandardDeviation: PlayerSDGameStatsQueryResult[],
   ) {
+    if (
+      !gamesAboveStandardDeviation ||
+      gamesAboveStandardDeviation.length === 0
+    ) {
+      throw Error('gamesAboveStandardDeviation is required parameter.');
+    }
+
     // For each player, find the games where they performed above their standard deviation for points, assists, and rebounds + averageOrBelowAveragePlayers points, assists, and rebounds
     const gamesByMatchCategory: Record<string, PlayerSDGameStatsQueryResult[]> =
       {

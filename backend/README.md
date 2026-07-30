@@ -37,4 +37,3 @@ curl -G "http://localhost:8080/find-undervalued-players" \
 The ingestions folder hosts the python scripts that are run for ingestions of data. It specifically pulls data into my postgres db in Supabase, which is used for my queries on the backend. They call different endpoints in the NBA_API and stores this data in my database.
 
 The scripts folder is used to run ingestions of existing data in my DB for computing stats such as NBA League Averages across different player positons
-

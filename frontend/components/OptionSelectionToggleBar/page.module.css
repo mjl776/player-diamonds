@@ -61,6 +61,25 @@
   flex-wrap: wrap;
 }
 
+.seasonButtonContainerWarning {
+  outline: 2px solid var(--negativeColor);
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
+.findPlayersContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+}
+
+.seasonWarningText {
+  font-size: 0.75rem;
+  font-weight: normal;
+  color: var(--negativeColor);
+}
+
 .findPlayersButton {
   background-color: var(--foreground);
   font-size: 0.8rem;
