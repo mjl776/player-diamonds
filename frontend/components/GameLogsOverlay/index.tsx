@@ -26,6 +26,7 @@ export const GameLogsOverlay: FC<GameLogsProps> = ({
                 <th className={styles.tableHeader}>Points</th>
                 <th className={styles.tableHeader}>Assists</th>
                 <th className={styles.tableHeader}>Rebounds</th>
+                <th className={styles.tableHeader}>Steals</th>
               </tr>
             </thead>
             <tbody className={styles.tableBody}>
@@ -39,6 +40,7 @@ export const GameLogsOverlay: FC<GameLogsProps> = ({
                     <td className={styles.tableCell}>{game.pts}</td>
                     <td className={styles.tableCell}>{game.ast}</td>
                     <td className={styles.tableCell}>{game.reb}</td>
+                    <td className={styles.tableCell}>{game.stl}</td>
                   </tr>
                 ))}
             </tbody>

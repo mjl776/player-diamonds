@@ -93,7 +93,7 @@
   }
 
   .tableHeader:nth-child(2),
-  .tableHeader:nth-child(3) {
+  .tableHeader:nth-child(3), .tableHeader:nth-child(4), .tableHeader:nth-child(8) {
     display: none;
   }
 }
