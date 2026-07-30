@@ -14,20 +14,20 @@ Next.JS
 
 Vercel
 
-## Relevant Folder Structures
+# Relevant Folder Structures
 
-# components
+## components
 
 The components folder hosts the main component pages in the application and also the subcomponents rendered as overlays or subcomponents on the same url.
 
-# constants
+## constants
 
 The constants folder holds reusable constants that are used in component pages
 
-# lib
+# #lib
 
 The lib folder hosts shared server-side utilites, such as the API base URL configuration
 
-# types
+## types
 
-The types folder holds the relevant types that are used as either props or useState object types within components in the app 
+The types folder holds the relevant types that are used as either props or useState object types within components in the app
