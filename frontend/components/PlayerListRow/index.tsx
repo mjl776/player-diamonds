@@ -3,7 +3,11 @@ import { PlayerStatsProps } from "@/types/playerCardTypes";
 import { FC } from "react";
 import styles from "./page.module.css";
 
-export const PlayerListRow: FC<PlayerStatsProps> = ({ player, rank }) => {
+export const PlayerListRow: FC<PlayerStatsProps> = ({
+  player,
+  rank,
+  onPlayerClick,
+}) => {
   console.log(player.sd_game_averages_by_player);
   const { avgMin, avgPts, avgAst, avgReb, avgStl } =
     player.sd_game_averages_by_player;
@@ -11,7 +15,12 @@ export const PlayerListRow: FC<PlayerStatsProps> = ({ player, rank }) => {
     player.sd_stats_difference_from_average;
   return (
     <tr className={styles.tableRow}>
-      <td className={styles.tableData}>{player.playerName}</td>
+      <td
+        className={`${styles.tableData} ${styles.playerNameCell}`}
+        onClick={() => onPlayerClick?.(player)}
+      >
+        {player.playerName}
+      </td>
       <td className={styles.tableData}>{rank}</td>
       <td className={styles.tableData}>{player.count}</td>
       <td className={styles.tableData}>
