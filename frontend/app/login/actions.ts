@@ -12,7 +12,7 @@ import { LoginState } from "@/types/loginTypes";
 
 export async function login(
   _state: LoginState,
-  formData: FormData
+  formData: FormData,
 ): Promise<LoginState> {
   const password = String(formData.get("password") ?? "");
   const from = String(formData.get("from") ?? "/");

@@ -9,7 +9,7 @@ import styles from "./page.module.css";
 export const LoginForm: FC<{ from: string }> = ({ from }) => {
   const [state, action, pending] = useActionState<LoginState, FormData>(
     login,
-    undefined
+    undefined,
   );
 
   return (

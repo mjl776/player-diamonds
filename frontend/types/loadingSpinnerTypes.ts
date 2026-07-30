@@ -1,5 +1,4 @@
-
 export type LoadingSpinnerProps = {
-    isLoading: boolean;
-    text: string;
-}
+  isLoading: boolean;
+  text: string;
+};

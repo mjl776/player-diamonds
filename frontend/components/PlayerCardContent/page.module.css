@@ -1,64 +1,63 @@
-
 .cardContainer {
-    border: var(--foreground) 2px solid;
-    border-radius: 2rem;
-    display: flex;
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 0.5rem;
-    background-color: var(--foreground);
-    padding: 2rem;
-    flex-wrap: wrap;
+  border: var(--foreground) 2px solid;
+  border-radius: 2rem;
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 0.5rem;
+  background-color: var(--foreground);
+  padding: 2rem;
+  flex-wrap: wrap;
 }
 
 .averageStatValues {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .averagesLabel {
-    font-size: 0.85rem;
-    font-weight: bold;
-    color: var(--tertiary);
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: var(--tertiary);
 }
 
 .diffValuePositive {
-    color: var(--positiveColor);
-    font-weight: bold;
+  color: var(--positiveColor);
+  font-weight: bold;
 }
 
 .diffValueNegative {
-    color: var(--negativeColor);
-    font-weight: bold;
+  color: var(--negativeColor);
+  font-weight: bold;
 }
 
 .playerName {
-    font-size: 1.5rem;
-    font-weight: bold;
+  font-size: 1.5rem;
+  font-weight: bold;
 }
 
 .playerGameText {
-    font-size: 0.85rem;
-    font-weight: bold;
-    color: var(--tertiary);
-    cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: var(--tertiary);
+  cursor: pointer;
 }
 
 .playerGameText:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 .playerPosition {
-    color: var(--tertiary);
+  color: var(--tertiary);
 }
 
 .playerHeight {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .playerTeam {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .playerCountry {
-    font-weight: bold;
+  font-weight: bold;
 }

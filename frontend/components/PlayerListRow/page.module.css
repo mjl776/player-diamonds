@@ -1,44 +1,42 @@
-
-
 .tableRow {
-    padding: 3px;
+  padding: 3px;
 }
 
 .tableRow:nth-child(even) {
-    background-color: var(--tertiary);
+  background-color: var(--tertiary);
 }
 
 .tableData {
-    text-align: left;
-    color: white;
-    padding: 0px 5px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap
+  text-align: left;
+  color: white;
+  padding: 0px 5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .tableData:nth-child(1) {
-    padding: 0px 20px;
-    font-weight: bold;
+  padding: 0px 20px;
+  font-weight: bold;
 }
 
 .negativeValue {
-    color: var(--negativeColor);
-    font-weight: bold;
+  color: var(--negativeColor);
+  font-weight: bold;
 }
 
 .positiveValue {
-    color: var(--positiveColor);
-    font-weight: bold;
+  color: var(--positiveColor);
+  font-weight: bold;
 }
 
 @media screen and (max-width: 768px) {
-    .tableData {
-        font-size: 0.75rem;
-        padding: 0px 8px;
-    }
-    .tableData:nth-child(2),
-    .tableData:nth-child(3) {
-        display: none;
-    }
+  .tableData {
+    font-size: 0.75rem;
+    padding: 0px 8px;
+  }
+  .tableData:nth-child(2),
+  .tableData:nth-child(3) {
+    display: none;
+  }
 }
