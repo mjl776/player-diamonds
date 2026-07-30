@@ -1,7 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../src/prisma.service';
-import { PlayerLeagueAverages, PlayerStats } from '../../generated/prisma/client';
-import { PlayerSDGameStats, PlayerSDGameStatsQueryResult, StandDeviationResult, FindUndervaluedPlayersQueryDto } from './playerstats.models';
+import {
+  PlayerLeagueAverages,
+  PlayerStats,
+} from '../../generated/prisma/client';
+import {
+  PlayerSDGameStats,
+  PlayerSDGameStatsQueryResult,
+  StandDeviationResult,
+  FindUndervaluedPlayersQueryDto,
+} from './playerstats.models';
 import { Decimal } from '@prisma/client/runtime/index-browser';
 import { min } from 'class-validator';
 
@@ -9,46 +17,70 @@ import { min } from 'class-validator';
 export class PlayerStatsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  private async getSeasonAverageStats(season: string, seasonType: string, position: string) {
+  private async getSeasonAverageStats(
+    season: string,
+    seasonType: string,
+    position: string,
+  ) {
     return await this.prisma.playerLeagueAverages.findFirst({
-        where: { season: season, seasonType: seasonType, position: position},
+      where: { season: season, seasonType: seasonType, position: position },
     });
   }
 
-  private async getLeagueAllAveragesByPosition(season: string, seasonType: string, position: string) {
+  private async getLeagueAllAveragesByPosition(
+    season: string,
+    seasonType: string,
+    position: string,
+  ) {
     return await this.prisma.playerLeagueAverages.findFirst({
-        where: { season: season, seasonType: seasonType, position: position},
+      where: { season: season, seasonType: seasonType, position: position },
     });
   }
 
-  private async getAverageOrBelowAveragePlayers(season: string, seasonType: string, averagePlayerStats: PlayerLeagueAverages, position: string) {
+  private async getAverageOrBelowAveragePlayers(
+    season: string,
+    seasonType: string,
+    averagePlayerStats: PlayerLeagueAverages,
+    position: string,
+  ) {
     // Initially in our query use very basic
     // stats to find players who are below average or average players,
     // Then we can add more advanced stats to the query later
     return await this.prisma.playerStats.findMany({
-        where: {
-            playerInfo: position === 'all' ? undefined : {
-              position: position,
-            },
-            season: season,
-            seasonType: seasonType,
-            gp: { gte: 20 }, // Only consider players who have played at least 20 games
-            reb: { lte: averagePlayerStats.reb},
-            ast: { lte: averagePlayerStats.ast },
-            pts: { lte: averagePlayerStats.pts },
-        },
-        include: {
-          playerInfo: {
-            select: { position: true, height: true, teamAbbreviation: true, country: true },
+      where: {
+        playerInfo:
+          position === 'all'
+            ? undefined
+            : {
+                position: position,
+              },
+        season: season,
+        seasonType: seasonType,
+        gp: { gte: 20 }, // Only consider players who have played at least 20 games
+        reb: { lte: averagePlayerStats.reb },
+        ast: { lte: averagePlayerStats.ast },
+        pts: { lte: averagePlayerStats.pts },
+      },
+      include: {
+        playerInfo: {
+          select: {
+            position: true,
+            height: true,
+            teamAbbreviation: true,
+            country: true,
           },
         },
+      },
     });
   }
 
-  private async calculateStandardDeviationOfPlayerStats(season: string, seasonType: string, playerIds: string[]): Promise<StandDeviationResult[]> {
-      // calcuate the standard deviation of the stats for the players who are below average or average
-      return await this.prisma.$queryRaw
-      `
+  private async calculateStandardDeviationOfPlayerStats(
+    season: string,
+    seasonType: string,
+    playerIds: string[],
+  ): Promise<StandDeviationResult[]> {
+    // calcuate the standard deviation of the stats for the players who are below average or average
+    return await this.prisma.$queryRaw`
         SELECT
           player_id,
           player_name,
@@ -78,13 +110,25 @@ export class PlayerStatsService {
       `;
   }
 
+  private async getPlayersWithAboveStandardDeviation(
+    season: string,
+    seasonType: string,
+    averageOrBelowAveragePlayers: PlayerStats[],
+    playerstandardDeviationResults: StandDeviationResult[],
+  ) {
+    // Get player threshold arrays for SD arrays for points, assists, and rebounds
+    const {
+      playerIds,
+      ptsThresholds,
+      astThresholds,
+      rebThresholds,
+      stlsThresholds,
+    } = this.getSDThresholds(
+      averageOrBelowAveragePlayers,
+      playerstandardDeviationResults,
+    );
 
-  private async getPlayersWithAboveStandardDeviation(season: string, seasonType: string, averageOrBelowAveragePlayers: PlayerStats[], playerstandardDeviationResults: StandDeviationResult[]) {
-
-      // Get player threshold arrays for SD arrays for points, assists, and rebounds
-      const { playerIds, ptsThresholds, astThresholds, rebThresholds, stlsThresholds } = this.getSDThresholds(averageOrBelowAveragePlayers, playerstandardDeviationResults);
-
-      const games: PlayerSDGameStatsQueryResult[] = await this.prisma.$queryRaw `
+    const games: PlayerSDGameStatsQueryResult[] = await this.prisma.$queryRaw`
       WITH thresholds AS (
           SELECT
             ${playerIds}::text[] AS playerIds,
@@ -143,77 +187,108 @@ export class PlayerStatsService {
 
     // Player id mapping from playerId to player
     const statsByPlayerId = new Map(
-      averageOrBelowAveragePlayers.map(p => [p.playerId, p])
+      averageOrBelowAveragePlayers.map((p) => [p.playerId, p]),
     );
 
     // For each player, find the games where they performed above their standard deviation for points, assists, and rebounds + averageOrBelowAveragePlayers points, assists, and rebounds
-    const gamesAboveStandardDeviation: PlayerSDGameStats[] = games.map(row => ({
-      playerName: row.playerName,
-      stats: statsByPlayerId.get(row.playerId)!,
-      player_game_logs: row.player_game_logs,
-      count: Number(row.match_count),
-      ast_match_count: Number(row.ast_match_count),
-      pts_match_count: Number(row.pts_match_count),
-      reb_match_count: Number(row.reb_match_count),
-      stl_match_count: Number(row.stl_match_count),
-      games_by_match_category: this.getSDGamesByMatchCategoryGames(row.player_game_logs),
-      sd_game_averages_by_player: this.getSDGameAveragesByPlayer(row.avg_min, row.avg_pts, row.avg_stl, row.avg_ast, row.avg_reb),
-      sd_stats_difference_from_average: this.getDifferenceBetweenPlayerStatsAndAverageSDStats(statsByPlayerId.get(row.playerId)!, {
-        min: row.avg_min,
-        pts: row.avg_pts,
-        ast: row.avg_ast,
-        reb: row.avg_reb,
-        stl: row.avg_stl,
+    const gamesAboveStandardDeviation: PlayerSDGameStats[] = games.map(
+      (row) => ({
+        playerName: row.playerName,
+        stats: statsByPlayerId.get(row.playerId)!,
+        player_game_logs: row.player_game_logs,
+        count: Number(row.match_count),
+        ast_match_count: Number(row.ast_match_count),
+        pts_match_count: Number(row.pts_match_count),
+        reb_match_count: Number(row.reb_match_count),
+        stl_match_count: Number(row.stl_match_count),
+        games_by_match_category: this.getSDGamesByMatchCategoryGames(
+          row.player_game_logs,
+        ),
+        sd_game_averages_by_player: this.getSDGameAveragesByPlayer(
+          row.avg_min,
+          row.avg_pts,
+          row.avg_stl,
+          row.avg_ast,
+          row.avg_reb,
+        ),
+        sd_stats_difference_from_average:
+          this.getDifferenceBetweenPlayerStatsAndAverageSDStats(
+            statsByPlayerId.get(row.playerId)!,
+            {
+              min: row.avg_min,
+              pts: row.avg_pts,
+              ast: row.avg_ast,
+              reb: row.avg_reb,
+              stl: row.avg_stl,
+            },
+          ),
       }),
-    }));
+    );
 
     return gamesAboveStandardDeviation;
-
   }
 
-  private getSDThresholds(averageOrBelowAveragePlayers: PlayerStats[], playerStandardDeviation: StandDeviationResult[]) {
-
+  private getSDThresholds(
+    averageOrBelowAveragePlayers: PlayerStats[],
+    playerStandardDeviation: StandDeviationResult[],
+  ) {
     // Get the player ids of the players who are below average or average
     const eligiblePlayers = averageOrBelowAveragePlayers
-    .map(player => {
-      const sd = playerStandardDeviation.find(r => r.player_id === player.playerId);
-      return sd ? { player, sd } : null;
-    })
-    .filter((entry): entry is { player: PlayerStats; sd: StandDeviationResult } => entry !== null);
+      .map((player) => {
+        const sd = playerStandardDeviation.find(
+          (r) => r.player_id === player.playerId,
+        );
+        return sd ? { player, sd } : null;
+      })
+      .filter(
+        (entry): entry is { player: PlayerStats; sd: StandDeviationResult } =>
+          entry !== null,
+      );
 
     const playerIds = eligiblePlayers.map(({ player }) => player.playerId);
 
-    const ptsThresholds = eligiblePlayers.map(({ player, sd }) =>
-      player.pts.toNumber() + sd.standard_deviation_points.toNumber() * 2.0);
+    const ptsThresholds = eligiblePlayers.map(
+      ({ player, sd }) =>
+        player.pts.toNumber() + sd.standard_deviation_points.toNumber() * 2.0,
+    );
 
-    const astThresholds = eligiblePlayers.map(({ player, sd }) =>
-      player.ast.toNumber() + sd.standard_deviation_assists.toNumber() * 2.0);
+    const astThresholds = eligiblePlayers.map(
+      ({ player, sd }) =>
+        player.ast.toNumber() + sd.standard_deviation_assists.toNumber() * 2.0,
+    );
 
-    const rebThresholds = eligiblePlayers.map(({ player, sd }) =>
-      player.reb.toNumber() + sd.standard_deviation_rebounds.toNumber() * 2.0);
+    const rebThresholds = eligiblePlayers.map(
+      ({ player, sd }) =>
+        player.reb.toNumber() + sd.standard_deviation_rebounds.toNumber() * 2.0,
+    );
 
-    const stlsThresholds = eligiblePlayers.map(({ player, sd }) =>
-      player.stl.toNumber() + sd.standard_deviation_steals.toNumber() * 2.0);
+    const stlsThresholds = eligiblePlayers.map(
+      ({ player, sd }) =>
+        player.stl.toNumber() + sd.standard_deviation_steals.toNumber() * 2.0,
+    );
 
-      // Create standard deviation thresholds to show standard deviations of players
-      // via the player_game_logs table for points, assists, and rebounds, steals
-      return {
-        playerIds,
-        ptsThresholds,
-        astThresholds,
-        rebThresholds,
-        stlsThresholds,
-      }
+    // Create standard deviation thresholds to show standard deviations of players
+    // via the player_game_logs table for points, assists, and rebounds, steals
+    return {
+      playerIds,
+      ptsThresholds,
+      astThresholds,
+      rebThresholds,
+      stlsThresholds,
+    };
   }
 
-  private getSDGamesByMatchCategoryGames(gamesAboveStandardDeviation: PlayerSDGameStatsQueryResult[]) {
+  private getSDGamesByMatchCategoryGames(
+    gamesAboveStandardDeviation: PlayerSDGameStatsQueryResult[],
+  ) {
     // For each player, find the games where they performed above their standard deviation for points, assists, and rebounds + averageOrBelowAveragePlayers points, assists, and rebounds
-    const gamesByMatchCategory: Record<string, PlayerSDGameStatsQueryResult[]> = {
-      points: [],
-      assists: [],
-      rebounds: [],
-      steals: [],
-    };
+    const gamesByMatchCategory: Record<string, PlayerSDGameStatsQueryResult[]> =
+      {
+        points: [],
+        assists: [],
+        rebounds: [],
+        steals: [],
+      };
 
     for (const game of gamesAboveStandardDeviation) {
       if (game.pts_match) {
@@ -231,27 +306,51 @@ export class PlayerStatsService {
     }
 
     return gamesByMatchCategory;
-
   }
 
-  private getSDGameAveragesByPlayer (avgMin: Decimal, avgPoints: Decimal, averageSteals: Decimal, averageAssists: Decimal, averageRebounds: Decimal) {
+  private getSDGameAveragesByPlayer(
+    avgMin: Decimal,
+    avgPoints: Decimal,
+    averageSteals: Decimal,
+    averageAssists: Decimal,
+    averageRebounds: Decimal,
+  ) {
     return {
-      avgMin: Number((avgMin).toFixed(1)),
+      avgMin: Number(avgMin.toFixed(1)),
       avgPts: Number(avgPoints.toFixed(1)),
       avgStl: Number(averageSteals.toFixed(1)),
       avgAst: Number(averageAssists.toFixed(1)),
       avgReb: Number(averageRebounds.toFixed(1)),
-    }
+    };
   }
 
-  private getDifferenceBetweenPlayerStatsAndAverageSDStats(playerStats: PlayerStats, averageStats: { min: Decimal, pts: Decimal, ast: Decimal, reb: Decimal, stl: Decimal }) {
+  private getDifferenceBetweenPlayerStatsAndAverageSDStats(
+    playerStats: PlayerStats,
+    averageStats: {
+      min: Decimal;
+      pts: Decimal;
+      ast: Decimal;
+      reb: Decimal;
+      stl: Decimal;
+    },
+  ) {
     return {
-      minDiff: Number((Number(averageStats.min) - Number(playerStats.min)).toFixed(1)),
-      ptsDiff: Number((Number(averageStats.pts) - Number(playerStats.pts)).toFixed(1)),
-      astDiff: Number((Number(averageStats.ast) - Number(playerStats.ast)).toFixed(1)),
-      rebDiff: Number((Number(averageStats.reb) - Number(playerStats.reb)).toFixed(1)),
-      stlDiff: Number((Number(averageStats.stl) - Number(playerStats.stl)).toFixed(1)),
-    }
+      minDiff: Number(
+        (Number(averageStats.min) - Number(playerStats.min)).toFixed(1),
+      ),
+      ptsDiff: Number(
+        (Number(averageStats.pts) - Number(playerStats.pts)).toFixed(1),
+      ),
+      astDiff: Number(
+        (Number(averageStats.ast) - Number(playerStats.ast)).toFixed(1),
+      ),
+      rebDiff: Number(
+        (Number(averageStats.reb) - Number(playerStats.reb)).toFixed(1),
+      ),
+      stlDiff: Number(
+        (Number(averageStats.stl) - Number(playerStats.stl)).toFixed(1),
+      ),
+    };
   }
 
   async findUndervaluedPlayers({
@@ -259,39 +358,61 @@ export class PlayerStatsService {
     seasonType,
     positions,
   }: FindUndervaluedPlayersQueryDto) {
-
     // Create a map of pending promises for Promise.all to get the league averages for each position
-    const leagueAveragesPromises = positions.map(position => this.getLeagueAllAveragesByPosition(season, seasonType, position));
+    const leagueAveragesPromises = positions.map((position) =>
+      this.getLeagueAllAveragesByPosition(season, seasonType, position),
+    );
     const leagueAveragesResults = await Promise.all(leagueAveragesPromises);
 
     // Create a map of pending promises for Promise.all to get the average stats for each position
-    const averageStatsPromises = positions.map(position => this.getSeasonAverageStats(season, seasonType, position));
+    const averageStatsPromises = positions.map((position) =>
+      this.getSeasonAverageStats(season, seasonType, position),
+    );
 
     // Wait for all the promises to resolve and store the results in a map
     const averageStatsResults = await Promise.all(averageStatsPromises);
 
     // Create a map of all postions whose stats are at or below average from our averageStatsResults to be awaited for a promise
-    const averageOrBelowAveragePlayersPromises = positions.map((position, index) => {
+    const averageOrBelowAveragePlayersPromises = positions.map(
+      (position, index) => {
         const averageStats = averageStatsResults[index];
 
         if (!averageStats) {
-            throw new Error(`No average stats found for position ${position} in season ${season} and season type ${seasonType}`);
+          throw new Error(
+            `No average stats found for position ${position} in season ${season} and season type ${seasonType}`,
+          );
         }
 
-        return this.getAverageOrBelowAveragePlayers(season, seasonType, averageStats, position);
-    });
+        return this.getAverageOrBelowAveragePlayers(
+          season,
+          seasonType,
+          averageStats,
+          position,
+        );
+      },
+    );
 
     // Wait for all the promises to resolve and store the results in a map
-    const averageOrBelowAveragePlayersResults = await Promise.all(averageOrBelowAveragePlayersPromises);
+    const averageOrBelowAveragePlayersResults = await Promise.all(
+      averageOrBelowAveragePlayersPromises,
+    );
 
     // flatten the array of arrays of players into a single array of players
-    const averageOrBelowAveragePlayers = averageOrBelowAveragePlayersResults.flat();
+    const averageOrBelowAveragePlayers =
+      averageOrBelowAveragePlayersResults.flat();
 
     // Get the player ids of the players who are below average or average
-    const playerIds = averageOrBelowAveragePlayers.map(player => player.playerId);
+    const playerIds = averageOrBelowAveragePlayers.map(
+      (player) => player.playerId,
+    );
 
     // Calculate the standard deviation of the stats for the players who are below average or average
-    const calculateStandarDeviationOfPlayers = await this.calculateStandardDeviationOfPlayerStats(season, seasonType, playerIds);
+    const calculateStandarDeviationOfPlayers =
+      await this.calculateStandardDeviationOfPlayerStats(
+        season,
+        seasonType,
+        playerIds,
+      );
 
     // For each player,
     // find the games where they
@@ -299,7 +420,13 @@ export class PlayerStatsService {
     // points, assists, or rebounds
     // + averageOrBelowAveragePlayers points, assists, or rebounds
     // by 2 standard deviations
-    const playesWithGamesAboveSD = await this.getPlayersWithAboveStandardDeviation(season, seasonType, averageOrBelowAveragePlayers, calculateStandarDeviationOfPlayers);
+    const playesWithGamesAboveSD =
+      await this.getPlayersWithAboveStandardDeviation(
+        season,
+        seasonType,
+        averageOrBelowAveragePlayers,
+        calculateStandarDeviationOfPlayers,
+      );
 
     // Sort the gamesAboveStandardDeviation array
     // by the count of games above standard deviation in ascending order
@@ -333,5 +460,4 @@ export class PlayerStatsService {
       select: { position: true },
     });
   }
-
 }

@@ -10,8 +10,14 @@ async function bootstrap() {
   BigInt.prototype['toJSON'] = function () {
     return this.toString();
   };
-  app.enableCors({ origin: ['http://localhost:3000', 'https://playerdiamonds.com', 'https://www.playerdiamonds.com'] });
+  app.enableCors({
+    origin: [
+      'http://localhost:3000',
+      'https://playerdiamonds.com',
+      'https://www.playerdiamonds.com',
+    ],
+  });
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
-  await app.listen(port, "0.0.0.0");
+  await app.listen(port, '0.0.0.0');
 }
 bootstrap();
