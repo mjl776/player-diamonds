@@ -1,9 +1,8 @@
-
 .container {
-    display: flex;
-    align-items: center;
-    text-align: left;
-    justify-content: center;
-    color: var(--background);
-    flex-wrap: wrap;
+  display: flex;
+  align-items: center;
+  text-align: left;
+  justify-content: center;
+  color: var(--background);
+  flex-wrap: wrap;
 }

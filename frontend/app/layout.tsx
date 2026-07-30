@@ -3,17 +3,17 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 
-import { Space_Grotesk, IBM_Plex_Mono } from 'next/font/google';
+import { Space_Grotesk, IBM_Plex_Mono } from "next/font/google";
 
 const grotesk = Space_Grotesk({
-  subsets: ['latin'],
-  weight: ['400','500','600','700'],
-  variable: '--font-grotesk',
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-grotesk",
 });
 const mono = IBM_Plex_Mono({
-  subsets: ['latin'],
-  weight: ['400','500','600'],
-  variable: '--font-mono',
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-mono",
 });
 
 export const metadata: Metadata = {

@@ -24,7 +24,11 @@ const Navbar: FC = () => {
               <li key={href}>
                 <Link
                   href={href}
-                  className={isActive ? `${styles.link} ${styles.linkActive}` : styles.link}
+                  className={
+                    isActive
+                      ? `${styles.link} ${styles.linkActive}`
+                      : styles.link
+                  }
                 >
                   {label}
                 </Link>
@@ -63,7 +67,11 @@ const Navbar: FC = () => {
                 <Link
                   href={href}
                   onClick={() => setIsOpen(false)}
-                  className={isActive ? `${styles.mobileLink} ${styles.mobileLinkActive}` : styles.mobileLink}
+                  className={
+                    isActive
+                      ? `${styles.mobileLink} ${styles.mobileLinkActive}`
+                      : styles.mobileLink
+                  }
                 >
                   {label}
                 </Link>

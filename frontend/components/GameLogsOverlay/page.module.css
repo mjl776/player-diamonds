@@ -1,69 +1,71 @@
 .backdrop {
-    position: fixed;
-    inset: 0;
-    background: color-mix(in srgb, black 65%, transparent);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1.5rem;
-    z-index: 50;
+  position: fixed;
+  inset: 0;
+  background: color-mix(in srgb, black 65%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  z-index: 50;
 }
 
 .playerGameCard {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    padding: 2rem;
-    border-radius: 1.5rem;
-    border: 1px solid color-mix(in srgb, var(--foreground) 20%, transparent);
-    background: var(--foreground);
-    transition: background 0.15s ease, border-color 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 2rem;
+  border-radius: 1.5rem;
+  border: 1px solid color-mix(in srgb, var(--foreground) 20%, transparent);
+  background: var(--foreground);
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .tableContainer {
-    background: var(--foreground);
-    border-radius: 1.2rem;
-    overflow: hidden;
-    padding: 2rem;
-    table-layout: fixed;
-    width: 100%;
-    box-sizing: border-box;
-    border-collapse: collapse;
+  background: var(--foreground);
+  border-radius: 1.2rem;
+  overflow: hidden;
+  padding: 2rem;
+  table-layout: fixed;
+  width: 100%;
+  box-sizing: border-box;
+  border-collapse: collapse;
 }
 
 .tableCaption {
-    caption-side: top;
-    color: var(--background);
-    font-size: 1.25rem;
-    font-weight: 700;
-    padding-bottom: 0.75rem;
-    text-align: center;
+  caption-side: top;
+  color: var(--background);
+  font-size: 1.25rem;
+  font-weight: 700;
+  padding-bottom: 0.75rem;
+  text-align: center;
 }
 
 .tableHeader {
-    font-weight: 600;
-    padding: 0px 5px;
-    font-size: 0.875rem;
-    text-align: left;
+  font-weight: 600;
+  padding: 0px 5px;
+  font-size: 0.875rem;
+  text-align: left;
 }
 
 .tableContainerWrapper {
-    overflow-x: auto
+  overflow-x: auto;
 }
 
 .tableCell {
-    padding: 0px 5px;
-    font-size: 0.875rem;
-    text-align: left;
-    color: var(--background);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap
+  padding: 0px 5px;
+  font-size: 0.875rem;
+  text-align: left;
+  color: var(--background);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.tableBody  {
-    background-color: var(--foreground);
+.tableBody {
+  background-color: var(--foreground);
 }
