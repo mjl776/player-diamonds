@@ -7,6 +7,7 @@ import { PlayerListRow } from "../PlayerListRow";
 import { OptionSelectionToggleBar } from "../OptionSelectionToggleBar";
 import { Season, Position } from "@/types/toggleOptionTypes";
 import { PlayerCardCarousel } from "../PlayerCardCarousel";
+import { PlayerCardOverlay } from "../PlayerCardOverlay";
 import { API_BASE_URL } from "@/lib/api";
 import { LoadingSpinner } from "../LoadingSpinner";
 import { DEFAULT_POSITIONS_LIST, DEFAULT_SEASON_LIST } from "@/constants";
@@ -25,6 +26,10 @@ export const UndervaluedPlayerFinder: FC = () => {
   );
   const [players, setPlayers] = useState<PlayerObject[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [selectedPlayer, setSelectedPlayer] = useState<{
+    player: PlayerObject;
+    rank: number;
+  } | null>(null);
   const onSelectedSeasonChange = (season: string) => {
     setSelectedSeason(season);
   };
@@ -173,6 +178,9 @@ export const UndervaluedPlayerFinder: FC = () => {
                   key={`player-composite-${index}`}
                   player={player}
                   rank={index + 1}
+                  onPlayerClick={(player) =>
+                    setSelectedPlayer({ player, rank: index + 1 })
+                  }
                 />
               ))}
             </tbody>
@@ -180,6 +188,14 @@ export const UndervaluedPlayerFinder: FC = () => {
         </div>
       ) : (
         <></>
+      )}
+
+      {selectedPlayer && (
+        <PlayerCardOverlay
+          player={selectedPlayer.player}
+          rank={selectedPlayer.rank}
+          onClose={() => setSelectedPlayer(null)}
+        />
       )}
     </div>
   );

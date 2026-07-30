@@ -1,3 +1,3 @@
 # Overview of Project
 
-Full Stack Project 
+Player Diamonds - A full stack project devoted to finding the most undervalued NBA players

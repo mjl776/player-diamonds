@@ -1,0 +1,15 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: color-mix(in srgb, black 65%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  z-index: 50;
+}
+
+.cardWrapper {
+  max-height: 90vh;
+  overflow-y: auto;
+}

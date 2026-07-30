@@ -20,6 +20,14 @@
   font-weight: bold;
 }
 
+.playerNameCell {
+  cursor: pointer;
+}
+
+.playerNameCell:hover {
+  text-decoration: underline;
+}
+
 .negativeValue {
   color: var(--negativeColor);
   font-weight: bold;
