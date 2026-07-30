@@ -17,7 +17,6 @@
   flex-wrap: wrap;
   gap: 0.75rem;
   padding: 2rem;
-  border-radius: 1.5rem;
   border: 1px solid color-mix(in srgb, var(--foreground) 20%, transparent);
   background: var(--foreground);
   transition:
@@ -68,4 +67,28 @@
 
 .tableBody {
   background-color: var(--foreground);
+}
+
+@media screen and (max-width: 768px) {
+  .tableCell {
+    font-size: 0.65rem;
+    padding: 0px 5px;
+  }
+
+  .tableHeader {
+    font-size: 0.65rem;
+    padding: 0px 5px;
+  }
+
+  .tableCell:nth-child(1),
+  .tableCell:nth-child(2),
+  .tableCell:nth-child(3) {
+    display: none;
+  }
+
+  .tableHeader:nth-child(1),
+  .tableHeader:nth-child(2),
+  .tableHeader:nth-child(3) {
+    display: none;
+  }
 }
