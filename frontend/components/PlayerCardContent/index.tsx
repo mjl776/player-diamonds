@@ -14,7 +14,7 @@ export const PlayerCardContent: FC<PlayerStatsProps> = ({
     <div className={styles.cardContainer}>
       <h1 className={styles.rank}> Rank: {rank}</h1>
       <h1 className={styles.playerName}>
-        {player.playerName} {" "}
+        {player.playerName}{" "}
         <span className={styles.playerPosition}>
           {player.stats.playerInfo.position}
         </span>

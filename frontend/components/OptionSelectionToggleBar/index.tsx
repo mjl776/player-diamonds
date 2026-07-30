@@ -1,5 +1,5 @@
 "use client";
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import styles from "./page.module.css";
 import "./page.module.css";
 import { OptionSelectionToggleBarProps } from "@/types/toggleOptionTypes";
@@ -13,11 +13,31 @@ export const OptionSelectionToggleBar: FC<OptionSelectionToggleBarProps> = ({
   onSelectedPosition,
   onFindPlayersClick,
 }) => {
+  const [showSeasonWarning, setShowSeasonWarning] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (selectedSeason) setShowSeasonWarning(false);
+  }, [selectedSeason]);
+
+  const handleFindPlayersClick = () => {
+    if (!selectedSeason) {
+      setShowSeasonWarning(true);
+      return;
+    }
+    onFindPlayersClick(selectedSeason, selectedPositions);
+  };
+
   return (
     <div className={styles.toggleBarContainer}>
       <div className={styles.seasonSelectionContainer}>
         <h1> Season </h1>
-        <div className={styles.seasonButtonContainer}>
+        <div
+          className={
+            showSeasonWarning
+              ? `${styles.seasonButtonContainer} ${styles.seasonButtonContainerWarning}`
+              : styles.seasonButtonContainer
+          }
+        >
           {seasons &&
             seasons.map((season, index) => {
               const isActive = selectedSeason == season.season;
@@ -63,13 +83,20 @@ export const OptionSelectionToggleBar: FC<OptionSelectionToggleBarProps> = ({
             })}
         </div>
       </div>
-      <button
-        className={styles.findPlayersButton}
-        onClick={() => onFindPlayersClick(selectedSeason, selectedPositions)}
-      >
-        {" "}
-        Find Players{" "}
-      </button>
+      <div className={styles.findPlayersContainer}>
+        {showSeasonWarning && (
+          <div className={styles.seasonWarningText}>
+            Please select a season first
+          </div>
+        )}
+        <button
+          className={styles.findPlayersButton}
+          onClick={handleFindPlayersClick}
+        >
+          {" "}
+          Find Players{" "}
+        </button>
+      </div>
     </div>
   );
 };
